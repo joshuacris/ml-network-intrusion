@@ -1,0 +1,17 @@
+# Data
+numpy
+pandas
+
+# ML models
+scikit-learn
+xgboost
+tensorflow
+keras
+
+# Visualization
+matplotlib
+seaborn
+
+# Notebook
+jupyter
+ipykernel
