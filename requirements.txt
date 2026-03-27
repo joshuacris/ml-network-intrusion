@@ -11,7 +11,10 @@ keras
 # Visualization
 matplotlib
 seaborn
+plotly
 
 # Notebook
 jupyter
 ipykernel
+
+joblib

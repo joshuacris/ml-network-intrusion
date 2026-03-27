@@ -1,7 +1,10 @@
 data/*/UNSW*.csv
-report/
+data/*/test_*.csv
+data/*/training_*.csv
 .DS_Store
 **/.DS_Store
+project.md/
+report/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
