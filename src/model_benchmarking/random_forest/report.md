@@ -1,0 +1,9 @@
+## Model Development and Performance Analysis
+
+To develop the classification model, we utilized a **Random Forest** architecture, optimizing hyperparameters through **Random Search CV** (`RandomSearchCV`). The training phase was conducted on a dataset of 107,740 samples with 58 features, maintaining a balanced class distribution of 51,890 normal instances and 55,850 attack instances. Upon evaluation against the test set ($N=55,945$), the model demonstrated high overall accuracy. However, a granular look at the confusion matrix revealed a notable number of false negatives, suggesting that some malicious activities were bypassing detection. Conversely, the model performed exceptionally well regarding precision, yielding only **282 false positives**. In the context of a 55,945-row test set, this low false positive rate is significant as it minimizes the operational "noise" that often leads to alert fatigue.
+
+## Strategic Optimization for Cybersecurity Constraints
+
+In a cybersecurity environment, the primary objective is to identify and neutralize bad actors; however, this must be balanced against real-world constraints such as limited manpower, high computational costs, and the need for rapid response. While high recall is vital for catching threats, an over-sensitive model can overwhelm a Security Operations Center (SOC) with false alarms. To find a sustainable equilibrium, we tuned our final model using the **F1-score**, which serves as the harmonic mean of precision and recall.
+
+By prioritizing the F1-score during the final tuning phase, we were able to maintain a high recall score—ensuring critical threats are captured—while ensuring the precision remained high enough to keep investigation requests manageable. The resulting model provides a robust compromise: it remains aggressive enough to detect attacks while staying efficient enough to operate within the limits of available compute and human analytical capacity.
