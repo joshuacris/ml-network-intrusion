@@ -3,8 +3,7 @@ data/*/test_*.csv
 data/*/training_*.csv
 .DS_Store
 **/.DS_Store
-project.md/
-report/
+*/project.md
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
