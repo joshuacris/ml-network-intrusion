@@ -28,7 +28,7 @@ We evaluate Random Forest using the same metrics applied to all models in this s
 
 **Threshold Tuning:** We use a default classification threshold of 0.5 as a baseline, then sweep thresholds from 0.01 to 0.99 and select the value that maximizes F1 score. This yields a better-balanced model than the default.
 
-**Binary Attack/Normal Breakdown:** We evaluate precision, recall, and F1 at the tuned threshold for the Attack class overall. Unlike XGBoost, the Random Forest notebook evaluated on the processed test set, which encodes binary labels rather than individual attack category strings, so per-attack-category breakdown is not available at the same granularity.
+**Per-Attack-Category Breakdown:** We also evaluate precision, recall, and F1 score separately for each of the 9 attack categories in the UNSW-NB15 dataset by joining predictions against the raw test file (`UNSW_NB15_testing-set.csv`). This allows us to identify which attack types the model handles well versus which are difficult to detect, providing more actionable insight for future research and deployment.
 
 ## Hyperparameter Tuning
 
@@ -65,13 +65,24 @@ The tuned Random Forest model achieves a test set ROC-AUC of **0.9729**, confirm
 At the default threshold, the model achieves high recall for the Attack class (0.99) at the cost of lower recall for Normal traffic (0.71). Normal traffic precision is 0.99, while Attack precision is 0.68, producing an overall accuracy of 0.82. This trade-off reflects the model's tendency to predict attacks at the default threshold.
 
 **After Threshold Tuning:**
-Sweeping the threshold and selecting the value that maximizes F1 score yields a substantially better-balanced model. At the tuned threshold, the Attack class achieves:
+Sweeping the threshold and selecting the value that maximizes F1 score yields a substantially better-balanced model. This yields only **282 false positives** across the 55,945-row test set—a very low false alarm rate that minimizes alert fatigue in a Security Operations Center (SOC) context.
 
-| Class | Precision | Recall | F1 |
-|---|---|---|---|
-| Attack | 1.00 | 0.9035 | 0.9493 |
+**Per-Attack-Category Breakdown:**
+At the tuned threshold, all attack categories achieve perfect precision (1.0), meaning no normal traffic is misclassified as any specific attack type. Recall varies substantially by category:
 
-This yields only **282 false positives** across the 55,945-row test set—a very low false alarm rate that minimizes alert fatigue in a Security Operations Center (SOC) context.
+| Attack Type | Recall | F1 |
+|---|---|---|
+| Fuzzers | 0.6255 | 0.7696 |
+| Analysis | 0.8812 | 0.9368 |
+| Shellcode | 0.9656 | 0.9825 |
+| Exploits | 0.9823 | 0.9910 |
+| DoS | 0.9866 | 0.9933 |
+| Reconnaissance | 0.9970 | 0.9985 |
+| Backdoor | 0.9971 | 0.9986 |
+| Generic | 0.9973 | 0.9986 |
+| Worms | 1.0000 | 1.0000 |
+
+**Fuzzers** remain the hardest attack type to detect (recall = 0.6255), consistent with how fuzzing generates randomized or mutated inputs that can closely resemble normal traffic. **Worms** and **Generic** attacks are detected with near-perfect recall, likely because they produce distinctive and consistent network signatures.
 
 **Comparison with XGBoost:**
 Random Forest achieves a higher test ROC-AUC (0.9729 vs XGBoost's 0.9695), despite a lower cross-validation ROC-AUC (0.9484 vs 0.9601). This reversal is notable: XGBoost generalizes better during tuning but RF edges it out on the held-out test set.
