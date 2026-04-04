@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import shap
 import xgboost as xgb
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import (
@@ -143,3 +144,34 @@ def plot_feature_importance(model, X_train, top_n=20):
     plt.tight_layout()
     plt.show()
     return importances
+
+
+def shap_analysis(model, X, sample_n=2000, top_n=20):
+    """
+    Compute SHAP values and produce two plots:
+      1. Beeswarm summary — shows each feature's impact magnitude and direction
+         across all samples. Red = high feature value, Blue = low feature value.
+      2. Bar summary — mean absolute SHAP value per feature (global importance).
+
+    X:        feature DataFrame (can be train or test set)
+    sample_n: subsample size for speed (TreeExplainer is fast but X can be large)
+    top_n:    number of top features to display
+    """
+    X_sample = X.sample(n=min(sample_n, len(X)), random_state=42)
+
+    explainer = shap.TreeExplainer(model)
+    shap_values = explainer(X_sample)
+
+    # Beeswarm — magnitude + direction per feature
+    shap.summary_plot(shap_values, X_sample, max_display=top_n, show=False)
+    plt.title('XGBoost — SHAP Beeswarm (top features)')
+    plt.tight_layout()
+    plt.show()
+
+    # Bar — mean absolute SHAP (cleaner ranking)
+    shap.summary_plot(shap_values, X_sample, plot_type='bar', max_display=top_n, show=False)
+    plt.title('XGBoost — SHAP Mean Absolute Value')
+    plt.tight_layout()
+    plt.show()
+
+    return shap_values, X_sample
