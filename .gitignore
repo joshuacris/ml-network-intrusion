@@ -212,3 +212,18 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# LaTeX report build output
+report/build/
+report/*.aux
+report/*.fdb_latexmk
+report/*.fls
+report/*.log
+report/*.out
+report/*.synctex.gz
+
+# Local reference LaTeX template
+RGNIYD_Template_AI_ML_/
+
+# Generated preprocessing artifacts
+data/processed/artifacts.pkl

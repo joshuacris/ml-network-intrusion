@@ -1,0 +1,150 @@
+\chapter{Model Comparison Study}
+\begin{spacing}{1.5}
+\setlength{\parskip}{0.3in}
+
+Short dummy text goes here. Introduce the set of models being compared and the purpose of the comparison.
+
+\section{Evaluation Setup}
+Short dummy text goes here. State that all models are evaluated on the same binary classification task and compared under the same evaluation protocol.
+
+\subsection{Task and Data Split}
+Short dummy text goes here. Explain the binary Normal vs Attack task, the train/test split, and the use of cross-validation on the training set.
+
+\subsection{Evaluation Metrics}
+Short dummy text goes here. Define ROC-AUC, precision, recall, and F1, and explain why they are appropriate for intrusion detection.
+
+\subsection{Threshold Tuning}
+Short dummy text goes here. Explain that each model is first evaluated at threshold 0.5, then thresholds are swept to select the value that maximizes F1.
+
+\subsection{Per-Attack-Category Evaluation}
+Short dummy text goes here. Explain that tuned binary predictions are also joined back to raw attack categories to analyze which attack types are easier or harder to detect.
+
+\section{Logistic Regression}
+\textbf{What it is.} Short dummy text goes here. Briefly describe logistic regression as a linear probabilistic classifier.
+
+\textbf{Why we selected it.} Short dummy text goes here. Explain that it serves as an interpretable baseline.
+
+\textbf{Hyperparameters tuned.} Short dummy text goes here. Summarize the search space used during tuning.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Placeholder logistic regression tuning table.}
+    \label{tab:logreg-good}
+    \begin{tabularx}{\linewidth}{l l X}
+        \toprule
+        Hyperparameter & Values Tried & Dummy Note \\
+        \midrule
+        `C` & Placeholder values & Short dummy text \\
+        `penalty` & Placeholder values & Short dummy text \\
+        `class\_weight` & Placeholder values & Short dummy text \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\textbf{Best configuration.} Short dummy text goes here. Report the selected hyperparameters and best CV score.
+
+\textbf{Model-specific interpretation.} Short dummy text goes here. Explain how the model performed and where it was strong or weak.
+
+\section{Multi-Layer Perceptron}
+\textbf{What it is.} Short dummy text goes here. Briefly describe the MLP as a feedforward neural network.
+
+\textbf{Why we selected it.} Short dummy text goes here. Explain that it provides a neural-network baseline for comparison with tree-based methods.
+
+\textbf{Hyperparameters tuned.} Short dummy text goes here. Summarize the search space used during tuning.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Placeholder MLP tuning table.}
+    \label{tab:mlp-good}
+    \begin{tabularx}{\linewidth}{l l X}
+        \toprule
+        Hyperparameter & Values Tried & Dummy Note \\
+        \midrule
+        `hidden\_layer\_sizes` & Placeholder values & Short dummy text \\
+        `activation` & Placeholder values & Short dummy text \\
+        `alpha` & Placeholder values & Short dummy text \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\textbf{Best configuration.} Short dummy text goes here. Report the selected hyperparameters and best CV score.
+
+\textbf{Model-specific interpretation.} Short dummy text goes here. Explain how the model performed and where it was strong or weak.
+
+\section{Random Forest}
+\textbf{What it is.} Short dummy text goes here. Briefly describe random forest as a bagged ensemble of decision trees.
+
+\textbf{Why we selected it.} Short dummy text goes here. Explain that it is a strong tree-based baseline for tabular classification.
+
+\textbf{Hyperparameters tuned.} Short dummy text goes here. Summarize the search space used during tuning.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Placeholder random forest tuning table.}
+    \label{tab:rf-good}
+    \begin{tabularx}{\linewidth}{l l X}
+        \toprule
+        Hyperparameter & Values Tried & Dummy Note \\
+        \midrule
+        `n\_estimators` & Placeholder values & Short dummy text \\
+        `max\_depth` & Placeholder values & Short dummy text \\
+        `max\_features` & Placeholder values & Short dummy text \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\textbf{Best configuration.} Short dummy text goes here. Report the selected hyperparameters and best CV score.
+
+\textbf{Model-specific interpretation.} Short dummy text goes here. Explain how the model performed and where it was strong or weak.
+
+\section{XGBoost}
+\textbf{What it is.} Short dummy text goes here. Briefly describe XGBoost as a gradient-boosted tree ensemble.
+
+\textbf{Why we selected it.} Short dummy text goes here. Explain that it is the advanced or novel model in the project.
+
+\textbf{Hyperparameters tuned.} Short dummy text goes here. Summarize the search space used during tuning.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Placeholder XGBoost tuning table.}
+    \label{tab:xgb-good}
+    \begin{tabularx}{\linewidth}{l l X}
+        \toprule
+        Hyperparameter & Values Tried & Dummy Note \\
+        \midrule
+        `n\_estimators` & Placeholder values & Short dummy text \\
+        `max\_depth` & Placeholder values & Short dummy text \\
+        `learning\_rate` & Placeholder values & Short dummy text \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\textbf{Best configuration.} Short dummy text goes here. Report the selected hyperparameters and best CV score.
+
+\textbf{Model-specific interpretation.} Short dummy text goes here. Explain how the model performed and where it was strong or weak.
+
+\section{Cross-Model Comparison}
+Short dummy text goes here. Compare the models directly and explain the main quantitative and qualitative takeaways.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Placeholder cross-model comparison table.}
+    \label{tab:model-comparison-good}
+    \begin{tabularx}{\linewidth}{l l l l X}
+        \toprule
+        Model & CV ROC-AUC & Test ROC-AUC & Tuned F1 & Dummy Note \\
+        \midrule
+        Logistic Regression & X.XXX & X.XXX & X.XXX & Short dummy text \\
+        MLP & X.XXX & X.XXX & X.XXX & Short dummy text \\
+        Random Forest & X.XXX & X.XXX & X.XXX & Short dummy text \\
+        XGBoost & X.XXX & X.XXX & X.XXX & Short dummy text \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\textbf{Strengths and weaknesses across models.} Short dummy text goes here. Summarize the most important tradeoffs between interpretability, robustness, and predictive performance.
+
+\textbf{Final selected model.} Short dummy text goes here. State the final chosen model and justify the decision.
+
+\end{spacing}
+\newpage

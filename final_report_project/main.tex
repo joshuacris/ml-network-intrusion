@@ -1,0 +1,66 @@
+\documentclass[11pt]{report}
+
+\usepackage[a4paper,top=3cm,bottom=3cm,left=3.5cm,right=3cm,marginparwidth=1.75cm,headheight=22pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathptmx}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage[labelfont=bf, textfont=bf]{caption}
+\usepackage{setspace}
+\usepackage[nottoc,notlot,notlof]{tocbibind}
+\usepackage{fancyhdr}
+\usepackage[numbers]{natbib}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue]{hyperref}
+
+\setlength{\parindent}{0pt}
+\setlength{\fboxrule}{0.5pt}
+\pagestyle{plain}
+\fontdimen2\font=0.5em
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyhead[R]{\bf \small \textsl{\nouppercase{\leftmark}} \vspace{0.1in}}
+    \fancyfoot[R]{\thepage}
+    \renewcommand{\headrulewidth}{2pt}
+}
+\urlstyle{same}
+
+\newcommand{\reporttitle}{Network Intrusion Detection Comparison Study}
+\newcommand{\reportsubtitle}{A Final Project Report}
+\newcommand{\coursename}{CSCC11 Winter 2026}
+\newcommand{\institutionname}{University of Toronto Scarborough}
+\newcommand{\reportdate}{April 2026}
+
+\begin{document}
+
+\hypersetup{pageanchor=false}
+\pagenumbering{gobble}
+\input{Title/coverpage}
+
+\input{Title/Abstract}
+
+\clearpage
+\hypersetup{pageanchor=true}
+\pagenumbering{roman}
+\renewcommand*\contentsname{\centering Table of Contents}
+\tableofcontents
+\newpage
+
+\pagenumbering{arabic}
+\input{Ch1-Introduction/Ch1-Introduction}
+\input{Ch2-Data/Ch2-Data}
+\input{Ch3-Model-Comparison/Ch3-Model-Comparison}
+\input{Ch4-Originality-Future-Work/Ch4-Originality-Future-Work}
+\input{Ch5-Conclusion/Ch5-Conclusion}
+
+\renewcommand\bibname{References}
+\bibliographystyle{unsrt}
+\begin{spacing}{1.2}
+\bibliography{Ref/References}
+\end{spacing}
+
+\end{document}

@@ -1,0 +1,27 @@
+\chapter{Introduction}
+\begin{spacing}{1.5}
+\setlength{\parskip}{0.3in}
+
+Machine learning has become an increasingly important component of modern cybersecurity systems because network traffic is too large, fast-moving, and complex to monitor effectively by manual inspection alone. One particularly important application is network intrusion detection, where the goal is to distinguish benign activity from malicious behaviour as early and reliably as possible. In practice, such systems must balance two competing demands: they should detect as many attacks as possible, but they should also avoid generating so many false alarms that analysts are overwhelmed. This makes intrusion detection a natural and practically important machine learning problem.
+
+\section{Problem Statement}
+In this project, we study the UNSW-NB15 network intrusion dataset as distributed through Kaggle \cite{kaggle_unsw_nb15}. The dataset contains modern normal network traffic together with nine attack categories: Fuzzers, Analysis, Backdoors, DoS, Exploits, Generic, Reconnaissance, Shellcode, and Worms. In the version used for this project, each record is represented as a tabular network-flow example with 49 original features and a class label \cite{kaggle_unsw_nb15}.
+
+Our task is a binary classification problem: given a network-flow record, predict whether it corresponds to normal activity (label 0) or an attack (label 1). The main research question of this project is:
+
+\textit{How do classical machine learning models and a more advanced ensemble method compare on modern tabular network intrusion detection data, and which model provides the best overall trade-off between predictive performance, robustness, and practical usefulness?}
+
+More specifically, we investigate whether tree-based and neural-network approaches meaningfully outperform Logistic Regression as a simple linear baseline, and whether the advanced model offers a convincing practical improvement over the standard methods covered in class.
+
+\section{Motivation}
+This problem is important because false negatives and false positives have very different operational costs. A false negative means malicious traffic is allowed to pass undetected, which can lead to system compromise, data loss, or service disruption. A false positive, on the other hand, incorrectly flags benign traffic as malicious and can create alert fatigue for analysts if it happens too frequently. A useful intrusion detection model must therefore be evaluated not only by overall accuracy, but also by its ability to separate attack traffic from normal traffic under a realistic thresholding and evaluation framework.
+
+The UNSW-NB15 dataset is well suited to this goal because it is more modern than many older intrusion-detection benchmarks and includes both normal traffic and diverse attack behaviours \cite{kaggle_unsw_nb15}. It therefore provides a meaningful setting in which to test how different model families behave on structured cybersecurity data.
+
+\section{Existing Approaches and Our Direction}
+Existing machine learning approaches to intrusion detection span several families, including supervised linear models, tree ensembles, and neural networks. A recent survey by Pinto et al. notes that supervised learning remains a dominant approach in practical IDS research because it can achieve strong detection performance on labeled attack data, while more complex approaches such as deep learning and ensemble methods are increasingly used when the goal is to model nonlinear behavior and richer feature interactions \cite{ids_survey_ci}. On the UNSW-NB15 dataset specifically, Kasongo and Sun compared several supervised models, including Logistic Regression, k-nearest neighbors, support vector machines, artificial neural networks, decision trees, and Naive Bayes, together with a feature-selection pipeline \cite{kasongo_sun_unsw}. More recently, Yin et al. proposed an MLP-based intrusion detection method for UNSW-NB15 that combines information gain, random forest ranking, and recursive feature elimination to improve feature selection before neural classification \cite{yin_igrf_rfe}.
+
+Our direction is more comparative and course-aligned than proposing a new feature-selection or neural architecture. We evaluate four representative models on the same binary intrusion-detection task under a shared preprocessing and evaluation pipeline: Logistic Regression, Multi-Layer Perceptron, Random Forest, and XGBoost. Logistic Regression, MLP, and Random Forest serve as the three core models from the course, while XGBoost is our advanced method. We selected XGBoost because it extends lecture ideas about decision trees, ensembles, and optimization into a stronger boosted-tree framework, and because gradient-boosted trees are widely recognized as strong methods for structured tabular classification \cite{xgboost_paper}. This gives us a clear way to test whether a more sophisticated ensemble delivers a practical improvement over the standard baselines on UNSW-NB15 without changing the problem definition or evaluation setup.
+
+\end{spacing}
+\newpage
