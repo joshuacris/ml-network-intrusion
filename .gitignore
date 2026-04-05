@@ -5,6 +5,7 @@ data/*/training_*.csv
 **/.DS_Store
 project.md/
 report/
+.history
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
