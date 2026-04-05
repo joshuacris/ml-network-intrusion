@@ -1,0 +1,21 @@
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Problem Statement}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Existing Approaches and Our Direction}{1}{section.1.2}%
+\contentsline {chapter}{\numberline {2}Data Collection, Preprocessing, and Representation}{2}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Dataset Description}{2}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Data Exploration}{2}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Data Cleaning and Feature Engineering}{2}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Data Representation and Final Datasets}{3}{section.2.4}%
+\contentsline {chapter}{\numberline {3}Model Comparison Study}{4}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Evaluation Setup}{4}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Model and Tuning Summary}{4}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Results Comparison}{4}{section.3.3}%
+\contentsline {chapter}{\numberline {4}Originality and Future Work}{6}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Originality}{6}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Future Work}{6}{section.4.2}%
+\contentsline {chapter}{\numberline {5}Conclusion}{7}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Conclusion}{7}{section.5.1}%
+\contentsline {chapter}{\numberline {A}Appendix}{8}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Exploratory Plots}{8}{section.A.1}%
+\contentsline {section}{\numberline {A.2}Feature Breakdown}{11}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Categorical Frequency Tables}{12}{section.A.3}%

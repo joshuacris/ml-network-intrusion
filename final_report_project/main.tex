@@ -1,6 +1,6 @@
 \documentclass[11pt]{report}
 
-\usepackage[a4paper,top=3cm,bottom=3cm,left=3.5cm,right=3cm,marginparwidth=1.75cm,headheight=22pt]{geometry}
+\usepackage[a4paper,top=3cm,bottom=3cm,left=1.5cm,right=1.5cm,marginparwidth=1.75cm,headheight=22pt]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{mathptmx}
@@ -17,9 +17,44 @@
 \usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue]{hyperref}
 
 \setlength{\parindent}{0pt}
+\setlength{\parskip}{0.35em}
 \setlength{\fboxrule}{0.5pt}
 \pagestyle{plain}
 \fontdimen2\font=0.5em
+
+\makeatletter
+\def\@makechapterhead#1{%
+  \vspace*{0\p@}%
+  {\parindent \z@ \raggedright \normalfont
+    \ifnum \c@secnumdepth >\m@ne
+      \huge\bfseries \@chapapp\space \thechapter
+      \par\nobreak
+      \vskip 12\p@
+    \fi
+    \interlinepenalty\@M
+    \Huge \bfseries #1\par\nobreak
+    \vskip 12\p@
+  }}
+
+\def\@makeschapterhead#1{%
+  \vspace*{0\p@}%
+  {\parindent \z@ \raggedright
+    \normalfont
+    \interlinepenalty\@M
+    \Huge \bfseries #1\par\nobreak
+    \vskip 12\p@
+  }}
+
+\renewcommand\section{\@startsection{section}{1}{\z@}%
+  {12\p@ \@plus 3\p@ \@minus 2\p@}%
+  {4\p@ \@plus 1\p@}%
+  {\normalfont\Large\bfseries}}
+
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+  {10\p@ \@plus 2\p@ \@minus 2\p@}%
+  {3\p@ \@plus 1\p@}%
+  {\normalfont\large\bfseries}}
+\makeatother
 
 \fancypagestyle{plain}{
     \fancyhf{}
@@ -56,6 +91,7 @@
 \input{Ch3-Model-Comparison/Ch3-Model-Comparison}
 \input{Ch4-Originality-Future-Work/Ch4-Originality-Future-Work}
 \input{Ch5-Conclusion/Ch5-Conclusion}
+\input{Ch6-Appendix/Ch6-Appendix}
 
 \renewcommand\bibname{References}
 \bibliographystyle{unsrt}

@@ -1,0 +1,110 @@
+\appendix
+\chapter{Appendix}
+\begin{spacing}{1.3}
+
+\section{Exploratory Plots}
+\label{app:exploratory-plots}
+
+This appendix collects the supplementary exploratory figures referenced in the
+data chapter.
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[
+        width=0.9\textwidth,
+        height=0.82\textheight,
+        keepaspectratio
+    ]{../report/plots/skewness_plots.png}
+    \caption{Raw versus $\log(1+x)$ distributions for the heavily skewed
+    numerical features identified during exploratory analysis.}
+    \label{fig:skewness-log1p}
+\end{figure}
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[
+        width=\textwidth,
+        height=0.78\textheight,
+        keepaspectratio
+    ]{../report/plots/categorical_plots.png}
+    \caption{Frequency distributions of the bucketed categorical features used
+    in the final preprocessing pipeline.}
+    \label{fig:categorical-buckets}
+\end{figure}
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[
+        width=\textwidth,
+        height=0.78\textheight,
+        keepaspectratio
+    ]{../report/plots/correlation-heatmap.png}
+    \caption{Correlation heatmap over the numerical features used during
+    exploratory analysis.}
+    \label{fig:correlation-heatmap}
+\end{figure}
+
+\clearpage
+\section{Feature Breakdown}
+\label{app:feature-breakdown}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Raw categorical and numerical features in the original dataset.}
+    \label{tab:feature-breakdown}
+    \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{0.2\linewidth} X}
+        \toprule
+        Feature Type & Variables \\
+        \midrule
+        Categorical (3) &
+        \texttt{proto}, \texttt{service}, \texttt{state} \\
+        Numerical (37) &
+        \texttt{ackdat}, \texttt{ct\_dst\_ltm}, \texttt{ct\_dst\_sport\_ltm},
+        \texttt{ct\_dst\_src\_ltm}, \texttt{ct\_flw\_http\_mthd},
+        \texttt{ct\_ftp\_cmd}, \texttt{ct\_src\_dport\_ltm},
+        \texttt{ct\_src\_ltm}, \texttt{ct\_srv\_dst}, \texttt{ct\_srv\_src},
+        \texttt{ct\_state\_ttl}, \texttt{dbytes}, \texttt{dinpkt},
+        \texttt{djit}, \texttt{dload}, \texttt{dloss}, \texttt{dmean},
+        \texttt{dpkts}, \texttt{dttl}, \texttt{dur}, \texttt{dwin},
+        \texttt{is\_ftp\_login}, \texttt{is\_sm\_ips\_ports}, \texttt{rate},
+        \texttt{response\_body\_len}, \texttt{sbytes}, \texttt{sinpkt},
+        \texttt{sjit}, \texttt{sload}, \texttt{sloss}, \texttt{smean},
+        \texttt{spkts}, \texttt{sttl}, \texttt{swin}, \texttt{synack},
+        \texttt{tcprtt}, \texttt{trans\_depth} \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\clearpage
+\section{Categorical Frequency Tables}
+\label{app:categorical-frequency}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Retained categorical levels based on training-split frequencies.}
+    \label{tab:categorical-retained}
+    \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{0.14\linewidth} X >{\raggedright\arraybackslash}p{0.12\linewidth}}
+        \toprule
+        Feature & Retained levels (counts) & Collapsed into \texttt{other} \\
+        \midrule
+        \texttt{proto} &
+        \texttt{tcp} (43{,}095), \texttt{udp} (29{,}418),
+        \texttt{unas} (3{,}515), \texttt{arp} (987), \texttt{ospf} (676),
+        \texttt{sctp} (324) &
+        4{,}317 \\
+        \texttt{service} &
+        \texttt{-} (47{,}153), \texttt{dns} (21{,}367),
+        \texttt{http} (8{,}287), \texttt{smtp} (1{,}851),
+        \texttt{ftp} (1{,}552), \texttt{ftp-data} (1{,}396),
+        \texttt{pop3} (423), \texttt{ssh} (204) &
+        99 \\
+        \texttt{state} &
+        \texttt{FIN} (39{,}339), \texttt{INT} (34{,}163),
+        \texttt{CON} (6{,}982), \texttt{REQ} (1{,}842) &
+        6 \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\end{spacing}
+\newpage
