@@ -1,0 +1,100 @@
+\chapter{Data Collection, Preprocessing, and Representation}
+\begin{spacing}{1.3}
+
+This chapter describes the dataset used in the project and the preprocessing
+steps applied before model training.
+
+\section{Dataset Description}
+We use the UNSW-NB15 network intrusion dataset from Kaggle
+\cite{kaggle_unsw_nb15}. At a high level, this dataset represents network
+traffic as tabular flow records rather than raw packets. Each row corresponds
+to one network-flow example and includes 49 original traffic features together
+with an attack category and a binary class label that indicates whether the
+flow is normal or malicious.The dataset includes normal traffic as well as nine attack categories:
+Fuzzers, Analysis, Backdoors, DoS, Exploits, Generic, Reconnaissance,
+Shellcode, and Worms \cite{kaggle_unsw_nb15}. Since the goal of our project is
+binary intrusion detection, we use the binary label and treat all attack
+categories as a single positive class. The Kaggle dataset already provides predefined training and testing files, and
+we use these splits directly. Among the 49 original features, the raw dataset
+contains three categorical variables, \texttt{proto}, \texttt{service}, and
+\texttt{state}, together with 37 numerical traffic features. Detailed feature
+descriptions can be viewed on the Kaggle dataset page
+\cite{kaggle_unsw_nb15}.
+
+\section{Data Exploration}
+Exploratory analysis showed that many numerical features were heavily skewed,
+the categorical variables contained many rare levels, and some numerical
+features were strongly correlated. In particular, the notebook found 11 pairs
+with absolute correlation above 0.9, including \texttt{dloss} with
+\texttt{dbytes} (0.997), \texttt{sloss} with \texttt{sbytes} (0.996),
+\texttt{dpkts} with \texttt{dbytes} (0.978), \texttt{spkts} with
+\texttt{sbytes} (0.966), and \texttt{tcprtt} with \texttt{synack} (0.935).
+We kept these features rather than dropping them aggressively because the
+tree-based models are relatively robust to correlated inputs and the
+regularized Logistic Regression baseline can still benefit from related traffic
+statistics. These patterns motivated the preprocessing choices described next.
+Supporting plots are provided in
+\hyperref[app:exploratory-plots]{Appendix~A.1}, including
+Figures~\ref{fig:skewness-log1p}, \ref{fig:categorical-buckets}, and
+\ref{fig:correlation-heatmap}.
+
+\section{Data Cleaning and Feature Engineering}
+The preprocessing pipeline was designed to support a fair comparison across the
+models while keeping the inputs consistent. We remove duplicate rows from both
+splits and drop columns that are non-predictive or not used for the binary
+task. In the original dataset, the raw feature set contains 3 categorical
+features and 37 numerical features; the full breakdown is provided in
+\hyperref[tab:feature-breakdown]{Appendix~A.2, Table~\ref*{tab:feature-breakdown}}.
+
+We then remove four columns before model fitting:
+\begin{itemize}
+    \item \texttt{id}, because it is only a row identifier and carries no predictive signal;
+    \item \texttt{attack\_cat}, because the task is binary intrusion detection rather than multi-class attack-type prediction;
+    \item \texttt{stcpb} and \texttt{dtcpb}, because these TCP base sequence numbers behave more like connection identifiers than stable behavioural features.
+\end{itemize}
+
+Rare categorical values are bucketed into an \texttt{other} category before
+one-hot encoding. We inspected the frequency distributions of
+\texttt{proto}, \texttt{service}, and \texttt{state} and retained the most
+common levels while grouping the remainder into \texttt{other}; the retained
+categories and their counts are summarized in
+\hyperref[tab:categorical-retained]{Appendix~A.3, Table~\ref*{tab:categorical-retained}}.
+We also apply $\log(1+x)$ to 14 heavily skewed numerical variables and
+standardize numerical features for Logistic Regression and the Multi-Layer
+Perceptron.
+
+\section{Data Representation and Final Datasets}
+We maintain two model-specific representations derived from the same cleaned
+data:
+\begin{itemize}
+    \item \textbf{Scaled matrix (\texttt{df\_model})}: 21 one-hot encoded categorical indicators and 37 scaled numerical features. This representation is used by Logistic Regression and the Multi-Layer Perceptron.
+    \item \textbf{Tree matrix (\texttt{df\_model\_tree})}: the same 21 one-hot encoded indicators combined with the 37 raw numerical features, without standardization. This representation is used by Random Forest and XGBoost.
+\end{itemize}
+
+Both matrices contain 58 predictors plus the label column.
+
+For hyperparameter tuning, we keep the predefined Kaggle training/testing
+split fixed and use \texttt{RandomizedSearchCV} with 3-fold cross-validation
+on the training split only. The test split remains untouched until final
+evaluation. Table~\ref{tab:data-split-summary} reports the final model-ready
+dataset sizes after duplicate removal.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \setlength{\tabcolsep}{4pt}
+    \renewcommand{\arraystretch}{0.95}
+    \caption{Final model-ready dataset sizes after duplicate removal.}
+    \label{tab:data-split-summary}
+    \begin{tabularx}{\linewidth}{l c c c}
+        \toprule
+        Split & Total Rows & Normal & Attack \\
+        \midrule
+        Training & 55{,}945 & 34{,}206 (61.1\%) & 21{,}739 (38.9\%) \\
+        Test & 107{,}740 & 51{,}890 (48.2\%) & 55{,}850 (51.8\%) \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\end{spacing}
+\newpage

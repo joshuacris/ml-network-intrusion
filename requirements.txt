@@ -5,8 +5,9 @@ pandas
 # ML models
 scikit-learn
 xgboost
-# tensorflow
-# keras
+shap
+tensorflow
+keras
 
 # Visualization
 matplotlib

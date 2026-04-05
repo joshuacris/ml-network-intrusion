@@ -1,0 +1,51 @@
+\chapter{Introduction}
+\begingroup
+\setlength{\parskip}{0.2em}
+\begin{spacing}{1.15}
+
+Network intrusion detection is a practical machine learning problem because
+modern network traffic is too large and complex to monitor effectively by
+manual inspection alone. A useful intrusion-detection system must identify
+malicious traffic reliably while avoiding so many false alarms that analysts
+become overwhelmed.
+
+\section{Problem Statement}
+In this project, we study the UNSW-NB15 network intrusion dataset from
+Kaggle \cite{kaggle_unsw_nb15}. At a high level, this dataset represents
+network traffic as tabular flow records and includes both normal traffic and
+multiple attack categories. It is well suited to supervised machine learning
+because each row corresponds to a network-flow example with associated labels.
+
+Our task is a binary classification problem: given a network-flow record,
+predict whether it corresponds to normal activity (label 0) or an attack
+(label 1). The main research question is:
+
+\textit{How do classical machine learning models and a more advanced ensemble method compare on modern tabular network intrusion detection data, and which model provides the best overall trade-off between predictive performance, robustness, and practical usefulness?}
+
+More specifically, we investigate whether tree-based and neural-network
+approaches meaningfully outperform Logistic Regression as a simple linear
+baseline, and whether the advanced model offers a practical improvement over
+the standard methods covered in class.
+
+\section{Existing Approaches and Our Direction}
+Existing machine learning approaches to intrusion detection include linear
+models, neural networks, and tree-based ensembles. Survey and dataset-specific
+studies show that supervised methods remain common for labeled intrusion data,
+while neural and ensemble methods are often used to capture more complex
+feature interactions \cite{ids_survey_ci,kasongo_sun_unsw,yin_igrf_rfe}.
+
+Our method is to compare four models on the same binary intrusion-detection
+task under a shared preprocessing and evaluation pipeline: Logistic
+Regression, Multi-Layer Perceptron, Random Forest, and XGBoost. Logistic
+Regression serves as the simple linear baseline, MLP provides a neural-network
+baseline, and Random Forest provides a standard tree-ensemble baseline.
+XGBoost is our advanced method. We chose it because it extends course
+ideas about decision trees and ensembles into a stronger boosted-tree
+framework, and because it is widely regarded as a strong method for tabular
+classification \cite{xgboost_paper}. This makes it a well-motivated advanced
+comparison point for testing whether a more sophisticated ensemble provides a
+meaningful practical improvement on UNSW-NB15.
+
+\end{spacing}
+\endgroup
+\newpage

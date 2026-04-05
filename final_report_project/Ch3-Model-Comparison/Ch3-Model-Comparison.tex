@@ -1,0 +1,127 @@
+\chapter{Model Comparison Study}
+\begin{spacing}{1.0}
+\small
+
+This chapter compares four supervised classifiers for binary network intrusion
+detection on the same \textit{Normal} vs.\ \textit{Attack} task:
+logistic regression, multi-layer perceptron (MLP), random forest, and
+XGBoost. The goal is to compare an interpretable linear baseline, a neural
+baseline, and two tree-based ensemble methods under a common evaluation and
+tuning pipeline.
+
+\section{Evaluation Setup}
+\textbf{Protocol.} All models were trained on the same processed training split
+and evaluated on the same held-out test split, with 3-fold cross-validation on
+the training data for model selection. \textbf{Metrics.} ROC-AUC was used for
+cross-validation because it measures ranking quality without fixing a decision
+threshold. Precision, recall, and F1 were then reported on the test set because
+intrusion detection must balance false alarms against missed attacks.
+\textbf{Tuning.} Each model was tuned with RandomizedSearchCV using search
+spaces broad enough to cover simpler and more expressive settings without
+becoming computationally excessive. \textbf{Threshold analysis.} After fitting
+the best cross-validated model, thresholds from 0.01 to 0.99 were swept and
+the threshold maximizing attack-class F1 was selected. For logistic regression,
+random forest, and XGBoost, the tuned predictions were also joined back to the
+raw attack\_cat labels to compare attack-family difficulty.
+
+\section{Model and Tuning Summary}
+\begin{table}[htbp]
+    \centering
+    \footnotesize
+    \setlength{\tabcolsep}{3pt}
+    \caption{Models, motivations, and tuning spaces used in the comparison.}
+    \label{tab:model-tuning-summary}
+    \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.2cm} X X}
+        \toprule
+        Model & What it is / why selected & Hyperparameters tried and best configuration \\
+        \midrule
+        Logistic Regression &
+        Linear probabilistic classifier; selected as the most interpretable
+        baseline and as a reference point for judging whether nonlinear models
+        add meaningful predictive value. &
+        Tried C on a log-uniform range from 1e-3 to 1e3, penalties l1, l2,
+        and elasticnet, class\_weight values None and balanced, and elastic-net
+        l1\_ratio from 0.1 to 0.9 using saga with max\_iter = 2000. Best:
+        penalty = elasticnet, C = 897.9856, l1\_ratio = 0.3434,
+        class\_weight = None. \\
+        \addlinespace[0.3em]
+        MLP &
+        Feedforward neural network; selected to test whether a flexible
+        nonlinear dense model improves over the linear baseline. &
+        Tried
+        hidden\_layer\_sizes from single- and multi-layer layouts between
+        (32) and (256,128,64,32), activation values relu and tanh,
+        learning\_rate\_init values 1e-3, 1e-4, 3e-4, and 5e-4, and alpha
+        values 1e-4, 1e-3, and 1e-2. Best: hidden\_layer\_sizes = (256,128),
+        activation = relu, learning\_rate\_init = 0.0001, alpha = 0.001. \\
+        \addlinespace[0.3em]
+        Random Forest &
+        Bagged ensemble of decision trees; selected as a strong tabular
+        baseline that captures nonlinear feature interactions and is robust to
+        feature scaling details. &
+        Tried n\_estimators values 100, 200, 300, and 500; max\_depth values
+        None, 10, 20, 30, and 40; min\_samples\_split values 2, 5, 10, and 20;
+        min\_samples\_leaf values 1, 2, 4, and 8; max\_features values sqrt,
+        log2, 0.3, and 0.5; and bootstrap values True and False. Best:
+        n\_estimators = 500, max\_depth = 30, min\_samples\_split = 10,
+        min\_samples\_leaf = 1, max\_features = sqrt, bootstrap = False. \\
+        \addlinespace[0.3em]
+        XGBoost &
+        Gradient-boosted tree ensemble; selected as the most advanced model in
+        the study and the one most likely to exploit structured tabular
+        patterns in intrusion data. &
+        Tried n\_estimators values 200, 300, 500, 700, and 1000; max\_depth
+        values 3, 4, 5, 6, and 8; learning\_rate values 0.01, 0.05, 0.1, and
+        0.2; subsample and colsample\_bytree values 0.6, 0.7, 0.8, and 1.0;
+        min\_child\_weight values 1, 3, and 5; gamma values 0, 0.1, 0.3, and
+        0.5; reg\_alpha values 0, 0.1, 0.5, and 1.0; and reg\_lambda values
+        0.5, 1.0, 2.0, and 5.0. Best: n\_estimators = 700, max\_depth = 8,
+        learning\_rate = 0.01, subsample = 1.0, colsample\_bytree = 0.7,
+        min\_child\_weight = 5, gamma = 0.3, reg\_alpha = 0,
+        reg\_lambda = 1.0. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\section{Results Comparison}
+\begin{table}[htbp]
+    \centering
+    \footnotesize
+    \setlength{\tabcolsep}{3pt}
+    \caption{Cross-model comparison on validation and test metrics.}
+    \label{tab:model-comparison-good}
+    \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.2cm} c c c c X}
+        \toprule
+        Model & CV ROC-AUC & Test ROC-AUC & Best threshold & Tuned F1 & Takeaway \\
+        \midrule
+        Logistic Regression & 0.9435 & 0.9586 & 0.05 & 0.9080 & Most interpretable; weakest ranking performance, but competitive after threshold tuning. \\
+        MLP & 0.9877 & 0.9693 & 0.01 & 0.9121 & Strong nonlinear baseline with better tuned recall/F1 than the linear model. \\
+        Random Forest & 0.9871 & 0.9736 & 0.04 & 0.9091 & Strong tabular baseline with excellent attack-family recall. \\
+        XGBoost & 0.9897 & 0.9761 & 0.04 & 0.9154 & Best overall balance of validation ROC-AUC, test ROC-AUC, and tuned F1. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+All four models improved noticeably after threshold tuning, showing that the
+default threshold of 0.50 is too conservative for this intrusion-detection
+setting. Logistic regression improved from 0.7899 to 0.9080, MLP from 0.8202
+to 0.9121, random forest from 0.8471 to 0.9091, and XGBoost from 0.8466 to
+0.9154. This is direct evidence that the hyperparameter and threshold choices
+were reasonable: the selected configurations were non-default and the threshold
+sweep produced better operating points for attack detection.
+
+The tree-based models achieved the strongest ROC-AUC values, showing that the
+intrusion features contain important nonlinear structure. XGBoost is the final
+selected model because it achieved the best cross-validated ROC-AUC (0.9897),
+the best test ROC-AUC (0.9761), and the best tuned F1 (0.9154). Random forest
+was close behind and was especially strong on raw attack families, while
+logistic regression remained the easiest model to interpret. At the tuned
+threshold, logistic regression was weakest on \textit{Analysis} (0.9586 recall)
+and \textit{Fuzzers} (0.9591), random forest was weakest on those same groups
+(both 0.8614), and XGBoost improved \textit{Fuzzers} to 0.9648 while keeping
+\textit{Analysis} as its hardest group at 0.8645. The MLP discussion is
+limited to overall metrics because its notebook-level attack-category analysis
+will be corrected separately.
+
+\end{spacing}
+\newpage
