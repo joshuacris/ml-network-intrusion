@@ -24,8 +24,16 @@ descriptions can be viewed on the Kaggle dataset page
 \section{Data Exploration}
 Exploratory analysis showed that many numerical features were heavily skewed,
 the categorical variables contained many rare levels, and some numerical
-features were strongly correlated. These patterns motivated the preprocessing
-choices described next. Supporting plots are provided in
+features were strongly correlated. In particular, the notebook found 11 pairs
+with absolute correlation above 0.9, including \texttt{dloss} with
+\texttt{dbytes} (0.997), \texttt{sloss} with \texttt{sbytes} (0.996),
+\texttt{dpkts} with \texttt{dbytes} (0.978), \texttt{spkts} with
+\texttt{sbytes} (0.966), and \texttt{tcprtt} with \texttt{synack} (0.935).
+We kept these features rather than dropping them aggressively because the
+tree-based models are relatively robust to correlated inputs and the
+regularized Logistic Regression baseline can still benefit from related traffic
+statistics. These patterns motivated the preprocessing choices described next.
+Supporting plots are provided in
 \hyperref[app:exploratory-plots]{Appendix~A.1}, including
 Figures~\ref{fig:skewness-log1p}, \ref{fig:categorical-buckets}, and
 \ref{fig:correlation-heatmap}.
