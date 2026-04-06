@@ -1,5 +1,5 @@
 \chapter{Data Preprocessing}
-\begin{spacing}{1.3}
+\begin{spacing}{1.0}
 
 \section{Dataset Description}
 
@@ -11,7 +11,7 @@ In our training set, our records are split 48.2\% normal (51,890) and 51.8\% att
 
 \section{Data Cleaning and Feature Engineering}
 
-To prevent data leakage, we removed duplicate rows from both training and test sets before preprocessing. We also removed the columns \texttt{id} (row identifier), \texttt{attack\_cat} (the multi-class label), and \texttt{stcpb}/\texttt{dtcpb} (random sequence numbers). All categorical features were one-hot encoded and condensed by putting categories with rare values into an \texttt{other} category. We also applied a log transformation ($log(1 + x)$) on our skewed numerical features to make the data more normal. Numerical features were standardized using \texttt{StandardScaler} for logistic regression and MLP models, while the tree-based models use the raw values as they are invariant to scaling.
+To prevent data leakage, we removed duplicate rows from both training and test sets before preprocessing. We also removed the columns \texttt{id} (row identifier), \texttt{attack\_cat} (the multi-class label), and \texttt{stcpb}/\texttt{dtcpb} (random sequence numbers). All categorical features were one-hot encoded and condensed by putting categories with rare values into an \texttt{other} category, converting nominal categories into numeric inputs that models can use. We also applied a log transformation ($log(1 + x)$) on our skewed numerical features to make the data more normal. Numerical features were standardized using \texttt{StandardScaler} for logistic regression and MLP models so that gradient-based optimization converges faster on normalized inputs, while the tree-based models use the raw values as they are invariant to scaling.
 
 \section{Data Representation and Splitting}
 

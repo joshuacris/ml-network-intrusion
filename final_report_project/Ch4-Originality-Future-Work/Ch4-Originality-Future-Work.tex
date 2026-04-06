@@ -1,52 +1,36 @@
 \chapter{Originality and Future Work}
-\begin{spacing}{1.3}
+\begin{spacing}{1.0}
 
 \section{Originality}
 
 Most studies that compare models on network intrusion detection datasets stick with a default classification threshold of 0.5.
 In this project, we adopt a different approach by tuning the classification threshold for each model rather than treating it as
-fixed. We test values from 0.01 to 0.99 and pick the one that gives the best F1 score, then compare those results to the standard
+fixed. As explained in Section 3, We test values from 0.01 to 0.99 and pick the one that gives the best F1 score, then compare those results to the standard
 0.5 threshold using confusion matrices and full classification reports.
 
-The reason for this is practical: in cybersecurity, missing an attack (a false negative) is usually far worse than raising a false
-alarm. By adjusting the threshold with that trade-off in mind, we end up with models that are more useful in real-world scenarios,
-not just ones that look good based on overall accuracy.
+The reason for this is that in cybersecurity applications, missing an attack (a false negative) is usually far worse than raising a false
+alarm. By adjusting the threshold according to this trade-off, we end up with models that are more useful in real-world scenarios rather than benchmarking accuracy.
 
-We also go beyond reporting a single performance number. Instead of only looking at overall metrics, we break down how each model
+Additionally, instead of only looking at overall metrics, we break down how each model
 performs across the nine attack categories in the UNSW-NB15 dataset using the \texttt{attack\_cat} feature. This gives a clearer picture of
-where each model succeeds and where it struggles.
-
-This more detailed analysis revealed some interesting differences. For example, Fuzzers turned out to be the hardest attack type 
-to detect for all models. At the same time, Logistic Regression — despite being the simplest model we tested — actually performed
-the best on that category.
+of each model's strengths and weaknesses. For example, Fuzzers was the hardest attack type 
+to detect for all models, while Logistic Regression, despite being the simplest model, actually performed the best on that category.
 
 \section{Future Work}
 
 One possible direction for future work would be to replace the scikit-learn \texttt{MLPClassifier} with a deep learning
-framework such as PyTorch or Keras. While scikit-learn’s MLP is simple and sufficient for a baseline, it lacks several
-important training features. It does not support dropout, a regularization technique that randomly deactivates neurons 
-during training to reduce overfitting and improve generalization. It also lacks batch normalization, which stabilizes 
-training by keeping activations consistent across layers — something that becomes increasingly important in deeper architectures.
-Additionally, scikit-learn does not allow per-class or per-sample loss weighting, meaning the model cannot be directed to penalize
-false negatives more heavily than false positives. In a cybersecurity context, this is a significant limitation since missing an
-attack is typically far more costly than a false alarm. Switching to PyTorch or Keras would address all of these issues and open
-the door to custom loss functions such as focal loss, which focuses training on hard-to-classify examples, as well as more advanced
-learning rate strategies such as cosine annealing or warm restarts.
+framework such as PyTorch or Keras. Unlike scikit-learn’s MLP, these frameworks support dropout, batch normalization, and
+per-class loss weighting, enabling custom loss functions such as focal loss that penalise hard-to-classify samples like Fuzzers
+more heavily, which directly addresses the weakest category across all models in this study.
 
-This is particularly relevant given that Fuzzers were the hardest attack type to detect across all models in this study, achieving
-only 44.75\% recall in MLP and around 62\% in both tree-based models. A more expressive and configurable neural network trained with
-focal loss could force the model to focus on these ambiguous samples rather than the easier categories it already handles well. 
-Oversampling the Fuzzers class could help improve performance further. Interestingly, Logistic Regression achieved the highest
-Fuzzers recall (95.91), suggesting the class may be more linearly separable than expected and that more complex models may be overfitting.
-Future work could explore using Logistic Regression specifically for Fuzzers detection as part of an ensemble model.
-
-Another promising direction is model ensembling or stacking. In this study, Logistic Regression, Random Forest, XGBoost, and MLP were
+Another promising direction is model ensembling, stacking, or experimenting with novel models. In this study, Logistic Regression, Random Forest, XGBoost, and MLP were
 each evaluated independently, yet each model showed different strengths across attack categories. For example, Logistic Regression 
 achieved the highest Fuzzers recall while tree-based models excelled on other categories. Rather than selecting a single best model,
 a stacking approach could combine the predictions of all four models using a meta-learner, allowing the ensemble to exploit the 
-complementary strengths of each classifier.
+complementary strengths of each classifier. Experimentation with other novel models such as CatBoost, LightGBM, or other deep learning architecture 
+may result in an improvement in performance metrics.
 
-Finally, all models in this study were trained and evaluated exclusively on the UNSW-NB15 dataset, which was collected in a controlled
+Finally, all models in this study were trained and evaluated exclusively on the UNSW-NB15 dataset, which was collected in a
 lab environment in 2015. This raises questions about how well these models would generalize to real-world traffic or more recent datasets
 such as CIC-IDS2017. Since network traffic and attack patterns evolve over time, cross-dataset validation would be a valuable next step 
 to better assess the true generalizability of these models.

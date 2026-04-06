@@ -31,125 +31,91 @@ XGBoost extends gradient boosting through its use of both the first and second o
 We selected XGBoost as the advanced/novel model in our project for three main reasons. Firstly, XGBoost is widely known as the SOTA ML when it comes to classification problems on tabular data. We wanted to gauge XGBoost's performance on this set of tabular data with a large number of features. Secondly, we wanted to compare tree-based models vs MLP on tabular data (with logistic regression as a baseline). Neural networks are rising in popularity, however, we wanted to show that deep learning approaches may not be the most optimal, as we found that tree-based models outperformed it in a tabular setting.  Lastly, XGBoost extends many concepts covered in lecture (decision trees, ensembles, gradient descent), making it a motivated choice.
 
 \section{Evaluation Setup}
-All models were trained on the same processed training split
-and evaluated on the same test split, with 3-fold cross-validation on
-the training data for model selection. \textbf{Metrics:} ROC-AUC was used as the metric for
-cross-validation as it measures the model's ability to rank positives above negatives (handling imbalance) without fixing a decision
-threshold. Precision, recall, and F1 were then reported on the test set because
-a robust model must balance false alarms against missed attacks.
+
+All models were trained and evaluated on the same train-test split, using 3-fold cross validation for finding the optimal hyperparameters. \textbf{Metrics:} ROC-AUC was used as the metric for
+cross-validation as it measures the model's ability to rank positives above negatives (handling imbalance) independent of a threshold. Precision, recall, and F1 were then reported on the test set because a robust model must balance false alarms against missed attacks. Accuracy would be misleading due to the slight imbalance in training set and moderate imbalance in the test set. 
 \textbf{Tuning:} Model hyperparameters were tuned with RandomizedSearchCV using search
-spaces that cover simpler and more expressive settings without
-becoming computationally excessive. \textbf{Threshold analysis:} After fitting
+spaces described in Table 3.1 that cover both simple and expressive settings without becoming computationally intense. Our hyperparameter choices are reasonable as these spaces span from underfitting to overfitting areas (low to high c, shallow to deep trees, etc.), and our sweep finds the most reasonable choice. \textbf{Threshold analysis:} After fitting
 the best cross-validated model, thresholds from 0.01 to 0.99 were swept and
-the threshold maximizing attack-class F1 was selected. The goal was to see the optimal threshold that would
-maximize each model's ability to distinguish between false and real attacks. Additionally, the tuned predictions were also joined back to the
+the threshold maximizing attack-class F1 was selected. Our goal, which differs from the typical goals other literature of purely maximizing F1 score or accuracy, was to see the optimal threshold that would
+maximize each model's ability to distinguish between false and real attacks. The default 0.5 threshold may not be optimal as the model may miss attacks due to being conservative. The tuned predictions were also joined back to the
 raw \texttt{attack\_cat} labels to find out which attack category models struggle to classify.
 
-\section{Model and Tuning Summary}
+\section{Model and Tuning Summary and Results Comparison}
 \begin{table}[htbp]
     \centering
     \footnotesize
     \setlength{\tabcolsep}{3pt}
-    \caption{Models, motivations, and tuning spaces used in the comparison.}
+    \caption{Hyperparameter search spaces and best configurations for each model.}
     \label{tab:model-tuning-summary}
-    \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.2cm} X X}
+    \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.5cm} X}
         \toprule
-        Model & What it is / why selected & Hyperparameters tried and best configuration \\
+        Model & Hyperparameters tried and best configuration \\
         \midrule
         Logistic Regression &
-        Linear probabilistic classifier; selected as the most interpretable
-        baseline and as a reference point for judging whether nonlinear models
-        add meaningful predictive value. &
-        Tried C on a log-uniform range from 1e-3 to 1e3, penalties l1, l2,
-        and elasticnet, class\_weight values None and balanced, and elastic-net
-        l1\_ratio from 0.1 to 0.9 using saga with max\_iter = 2000. Best:
-        penalty = elasticnet, C = 897.9856, l1\_ratio = 0.3434,
-        class\_weight = None. \\
+        Tried \texttt{C} on a log-uniform range from 1e-3 to 1e3; \texttt{penalty} values \texttt{l1}, \texttt{l2}, and \texttt{elasticnet}; \texttt{class\_weight} values \texttt{None} and \texttt{balanced}; \texttt{l1\_ratio} from 0.1 to 0.9; \texttt{solver} = \texttt{saga}; \texttt{max\_iter} = 2000.
+        Best: \texttt{penalty} = \texttt{elasticnet}, \texttt{C} = 897.9856, \texttt{l1\_ratio} = 0.3434, \texttt{class\_weight} = \texttt{None}. \\
         \addlinespace[0.3em]
         MLP &
-        Feedforward neural network; selected to test whether a flexible
-        nonlinear dense model improves over the linear baseline. &
-        Tried
-        hidden\_layer\_sizes from single- and multi-layer layouts between
-        (32) and (256,128,64,32), activation values relu and tanh,
-        learning\_rate\_init values 1e-2, 1e-3, 5e-4, 3e-4, and 1e-4, alpha
-        values 1e-4, 1e-3, 1e-2, 0.1, and 1.0, and batch\_size values 32, 64,
-        128, and 256. Best: hidden\_layer\_sizes = (128,64),
-        activation = tanh, learning\_rate\_init = 0.01, alpha = 0.01,
-        batch\_size = 128. \\
+        Tried \texttt{hidden\_layer\_sizes} from single- to multi-layer layouts between (32,) and (256,128,64,32); \texttt{activation} values \texttt{relu} and \texttt{tanh}; \texttt{learning\_rate\_init} values 1e-2, 1e-3, 5e-4, 3e-4, and 1e-4; \texttt{alpha} values 1e-4, 1e-3, 1e-2, 0.1, and 1.0; \texttt{batch\_size} values 32, 64, 128, and 256.
+        Best: \texttt{hidden\_layer\_sizes} = (128,64), \texttt{activation} = \texttt{tanh}, \texttt{learning\_rate\_init} = 0.01, \texttt{alpha} = 0.01, \texttt{batch\_size} = 128. \\
         \addlinespace[0.3em]
         Random Forest &
-        Bagged ensemble of decision trees; selected as a strong tabular
-        baseline that captures nonlinear feature interactions and is robust to
-        feature scaling details. &
-        Tried n\_estimators values 100, 200, 300, and 500; max\_depth values
-        None, 10, 20, 30, and 40; min\_samples\_split values 2, 5, 10, and 20;
-        min\_samples\_leaf values 1, 2, 4, and 8; max\_features values sqrt,
-        log2, 0.3, and 0.5; and bootstrap values True and False. Best:
-        n\_estimators = 300, max\_depth = 10, min\_samples\_split = 20,
-        min\_samples\_leaf = 4, max\_features = 0.3, bootstrap = True. \\
+        Tried \texttt{n\_estimators} values 100, 200, 300, and 500; \texttt{max\_depth} values None, 10, 20, 30, and 40; \texttt{min\_samples\_split} values 2, 5, 10, and 20; \texttt{min\_samples\_leaf} values 1, 2, 4, and 8; \texttt{max\_features} values \texttt{sqrt}, \texttt{log2}, 0.3, and 0.5; \texttt{bootstrap} values True and False.
+        Best: \texttt{n\_estimators} = 300, \texttt{max\_depth} = 10, \texttt{min\_samples\_split} = 20, \texttt{min\_samples\_leaf} = 4, \texttt{max\_features} = 0.3, \texttt{bootstrap} = True. \\
         \addlinespace[0.3em]
         XGBoost &
-        Gradient-boosted tree ensemble; selected as the most advanced model in
-        the study and the one most likely to exploit structured tabular
-        patterns in intrusion data. &
-        Tried n\_estimators values 200, 300, 500, 700, and 1000; max\_depth
-        values 3, 4, 5, 6, and 8; learning\_rate values 0.01, 0.05, 0.1, and
-        0.2; subsample and colsample\_bytree values 0.6, 0.7, 0.8, and 1.0;
-        min\_child\_weight values 1, 3, and 5; gamma values 0, 0.1, 0.3, and
-        0.5; reg\_alpha values 0, 0.1, 0.5, and 1.0; and reg\_lambda values
-        0.5, 1.0, 2.0, and 5.0. Best: n\_estimators = 1000, max\_depth = 4,
-        learning\_rate = 0.01, subsample = 0.7, colsample\_bytree = 0.8,
-        min\_child\_weight = 1, gamma = 0.1, reg\_alpha = 1.0,
-        reg\_lambda = 2.0. \\
+        Tried \texttt{n\_estimators} values 200, 300, 500, 700, and 1000; \texttt{max\_depth} values 3, 4, 5, 6, and 8; \texttt{learning\_rate} values 0.01, 0.05, 0.1, and 0.2; \texttt{subsample} and \texttt{colsample\_bytree} values 0.6, 0.7, 0.8, and 1.0; \texttt{min\_child\_weight} values 1, 3, and 5; \texttt{gamma} values 0, 0.1, 0.3, and 0.5; \texttt{reg\_alpha} values 0, 0.1, 0.5, and 1.0; \texttt{reg\_lambda} values 0.5, 1.0, 2.0, and 5.0.
+        Best: \texttt{n\_estimators} = 1000, \texttt{max\_depth} = 4, \texttt{learning\_rate} = 0.01, \texttt{subsample} = 0.7, \texttt{colsample\_bytree} = 0.8, \texttt{min\_child\_weight} = 1, \texttt{gamma} = 0.1, \texttt{reg\_alpha} = 1.0, \texttt{reg\_lambda} = 2.0. \\
         \bottomrule
     \end{tabularx}
 \end{table}
 
-\section{Results Comparison}
 \begin{table}[htbp]
     \centering
     \footnotesize
     \setlength{\tabcolsep}{3pt}
     \caption{Cross-model comparison on validation and test metrics.}
     \label{tab:model-comparison-good}
-    \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.2cm} c c c c X}
+    \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.2cm} c c c c c X}
         \toprule
-        Model & CV ROC-AUC & Test ROC-AUC & Best threshold & Tuned F1 & Takeaway \\
+        Model & CV ROC-AUC & Test ROC-AUC & Default F1 & Best Threshold & Tuned F1 & Takeaway \\
         \midrule
-        Logistic Regression & 0.9435 & 0.9586 & 0.05 & 0.9080 & Most interpretable; weakest ranking performance, but competitive after threshold tuning. Highest Fuzzers recall across all models (0.9591). \\
-        MLP & 0.9508 & 0.9549 & 0.83 & 0.8425 & Weakest tuned F1 among all four models; Fuzzers is by far its hardest category at 0.4475 recall. \\
-        Random Forest & 0.9484 & 0.9729 & 0.04 & 0.9091 & Best test ROC-AUC overall; strong and consistent across attack families. \\
-        XGBoost & 0.9601 & 0.9695 & 0.04 & 0.9154 & Best cross-validation ROC-AUC and best tuned F1; marginally behind Random Forest on held-out test ROC-AUC. \\
+        Logistic Regression & 0.9435 & 0.9586 & 0.7899 & 0.05 & 0.9080 & Most interpretable; highest tuned F1 across all models. Highest Fuzzers recall (0.9591). \\
+        MLP                 & 0.9508 & 0.9549 & 0.8067 & 0.83 & 0.8425 & Weakest tuned F1; Fuzzers is by far its hardest category at 0.4475 recall. \\
+        Random Forest       & 0.9484 & 0.9729 & 0.8062 & 0.74 & 0.8784 & Best test ROC-AUC; second-best tuned F1 among tree-based models. \\
+        XGBoost             & 0.9601 & 0.9695 & 0.8175 & 0.69 & 0.8680 & Best CV ROC-AUC; selected as final model. \\
         \bottomrule
     \end{tabularx}
 \end{table}
 
 All four models improved after threshold tuning compared to the default 0.50
 threshold. Logistic Regression improved from 0.7899 to 0.9080, Random Forest
-from 0.8471 to 0.9091, XGBoost from 0.8466 to 0.9154, and MLP from 0.8067 to
-0.8425. This confirms that the default threshold is too conservative for this
-intrusion-detection setting and that the threshold sweep produced meaningfully
-better operating points for attack detection.
+from 0.8062 to 0.8784, XGBoost from 0.8175 to 0.8680, and MLP from 0.8067 to
+0.8425. This confirms that threshold tuning produces meaningfully better
+operating points for all models. The CV and test ROC-AUC scores are closely
+aligned across all models (e.g.\ XGBoost: CV 0.9601 vs.\ test 0.9695; RF: CV
+0.9484 vs.\ test 0.9729), indicating the tuned configurations generalise well, providing evidence that the hyperparameter search spaces were well-chosen.
 
-The two tree-based models achieved the strongest overall scores. Random Forest
-achieved the highest test ROC-AUC (0.9729), while XGBoost led on
-cross-validation ROC-AUC (0.9601) and tuned F1 (0.9154). The gap between
-them is small — 0.0034 on test ROC-AUC — and the two models produced
-identical per-attack-category recall after threshold tuning: Fuzzers was the
-hardest category for both at 0.6255 recall, followed by Analysis at 0.8812,
-with all remaining categories at 0.9656 or higher and Worms reaching perfect
-recall (1.0000). The close performance between Random Forest and XGBoost is
-consistent with the nearly balanced class distribution in this dataset, which
-limits the gradient signal that boosting can exploit.
+XGBoost achieved the best CV ROC-AUC (0.9601) and is selected as the final
+model, as CV ROC-AUC was the primary optimization metric. Random Forest
+achieved the highest test ROC-AUC (0.9729 vs.\ XGBoost's 0.9695) and tuned F1
+(0.8784 vs.\ 0.8680) by a small gap. Logistic Regression
+achieved the highest tuned F1 across all four models (0.9080), showing
+that the simplest model can produce the best decision boundary after
+threshold tuning. Both tree-based models outperformed MLP on
+ROC-AUC, showing that the tabular features contain a
+structure that tree-based models can adapt to better than an MLP.
 
-Logistic Regression, despite being the simplest model, remained competitive
-after tuning (F1 = 0.9080) and achieved the highest Fuzzers recall across all
-four models at 0.9591, with Analysis being its weakest category at 0.9586.
-This suggests Fuzzers may be more linearly separable than expected. MLP
-achieved a test ROC-AUC of 0.9549 and a tuned F1 of 0.8425 — the lowest
-among all four models — with Fuzzers being by far its hardest category at
-only 0.4475 recall, the lowest Fuzzers recall across all models.
+Per-attack-category analysis reveals consistent results between the two
+tree-based models. Fuzzers was the hardest category for all models, with both
+XGBoost and Random Forest achieving 0.6255 recall, showing that the
+randomized nature of fuzzers closely resembles normal records.
+All other categories achieved 0.88 recall or higher for both tree models, with
+Worms reaching perfect recall (1.0000) for XGBoost. Logistic Regression
+achieved the highest Fuzzers recall of all four models at 0.9591, with
+Analysis as its weakest category at 0.9586, suggesting Fuzzers may be
+more linearly separable than expected. MLP struggled most on Fuzzers at only
+0.4475 recall, being the lowest across all models.
 
 \end{spacing}
-\newpage

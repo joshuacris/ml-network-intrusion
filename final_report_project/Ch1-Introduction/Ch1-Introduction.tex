@@ -1,7 +1,7 @@
 \chapter{Introduction}
 \begingroup
 \setlength{\parskip}{0.2em}
-\begin{spacing}{1.15}
+\begin{spacing}{1.0}
 
     The purpose of the project is to analyze the applications of machine learning models in the field
     of Cyber Security. One rising application of ML within this industry is to detect malicious network
@@ -31,8 +31,11 @@ most robustness in a cyber security setting, balancing both robustness in predic
 
 Existing ML approaches to network intrusion detection include fitting tree-based models or
 deep learning on a processed dataset. Some use simpler models such as Random Forest
-while others use more novel models such as XGBoost, CatBoost, or LightGBM, or even 
-neural networks depending on the dataset.
+while others use more novel models such as XGBoost, CatBoost, or LightGBM, or even
+neural networks depending on the dataset. Most existing work evaluates models using a
+fixed decision threshold of 0.5 and reports overall accuracy or F1, without breaking down
+performance across attack categories or tuning the threshold to the specific
+trade-offs of the intrusion detection setting.
 
 Our method is to compare four models on the same binary classification
 task under a shared preprocessing and evaluation pipeline: Logistic
@@ -43,9 +46,8 @@ networks on tabular data and to see if it can outperform tree-based models, whil
 is our advanced method. We chose this model because it extends the course
 ideas and our learning about decision trees, random forests, gradient descent, and ensemble models into a
 stronger, tree-based ensemble using gradient-boosted trees. Additionally, we wanted to work with
-XGBoost as we have already been familiar with it before, as it known for being one of the strongest
-and fastest (and even scalable) models for working with tabular data. This makes it a well-motivated advanced
-model for our project.
+XGBoost, as it is known for being one of the strongest and most scalable models for tabular data,
+making it a well-motivated advanced model for our project.
 
 \end{spacing}
 \endgroup
