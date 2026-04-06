@@ -2,27 +2,48 @@
 \begin{spacing}{1.0}
 \small
 
-This chapter compares four supervised classifiers for binary network intrusion
-detection on the same \textit{Normal} vs.\ \textit{Attack} task:
-logistic regression, multi-layer perceptron (MLP), random forest, and
-XGBoost. The goal is to compare an interpretable linear baseline, a neural
-baseline, and two tree-based ensemble methods under a common evaluation and
-tuning pipeline.
+\section{Model Descriptions and Motivations}
+
+\subsection{Logistic Regression}
+
+Logistic regression is a linear model that uses a linear combination of its inputs to model the log-odds of the positive class and outputting a probability using the sigmoid function. More specifically, it uses the formula $p = \sigma(w^T x + b)$ to calculate these odds, and is optimized by minimizing cross-entropy loss using gradient descent. To prevent overfitting, the model also supports L1, L2, and elastic-net regularization (L1 sparsifies coefficients, L2 shrinks them, and elastic net combines both). It is a popular baseline for classification problems, especially on tabular data due to its simplicity, accurate predictions, and interpretability. 
+
+We chose the logistic regression model as we want to use it as a baseline for predictive power in our dataset. Since it is one of the simplest models, it is the best reference for judging if the more complex models perform well. We believe that this model would fit well on the UNSW-NB15 dataset due to its tabular data with some correlated features, where logistic regression's optimization and regularization shine.
+\subsection{Multi-Layer Perceptron (MLP)}
+
+Multi-Layer Perceptron (MLP) is a supervised learning algorithm and is also known as a modern feedforward neural network. It consists of fully connected dense layers that transform input data from one dimension to another. These dense layers are made up of neurons with nonlinear activation functions, which allow the network to model complex patterns and distinguish data that is not linearly separable, and can be used for both classification or regression.
+
+The basic workflow of the MLP can be simplified via forward propagation, loss functions, backpropagation and optimization. Each neuron in a hidden or output layer computes a weighted sum of its inputs: $z = \sum_i w_i x_i + b$ where \(x_i\) is the input value, \(w_i\) is the corresponding weight, and \(b\) is the bias term. After calculating \(z\), the neuron applies an activation function to produce its output. When we reach the output layer, the model's error is calculated using a loss function — binary cross-entropy for classification, or mean squared error (MSE) for regression. Once the loss is computed, we calculate the gradient of the loss with respect to each weight, which is then propagated backward through the network layer by layer, allowing us to update the weights in a way that reduces the loss in future predictions. To prevent overfitting, MLPs commonly use regularization techniques such as dropout, which randomly deactivates a fraction of neurons during training, and L2 regularization (weight decay), which penalizes large weights in the loss function to encourage simpler, more generalizable models.
+
+We selected the MLP for two reasons: First, MLP benefits directly from the scaled and log-transformed preprocessing applied to our dataset, as gradient-based optimization converges more effectively on normalized inputs, which is an advantage that tree-based models like XGBoost and Random Forest do not require. Second, MLP builds naturally on what we learned in lecture about neural networks and gradient descent, making it a fitting and well-motivated addition to our model comparison. 
+\subsection{Random Forest}
+
+Random Forest is a tree-based ensemble algorithm that builds a large number of decision trees and, in classification, determines a label using majority vote. Each tree is trained with a sample of the training data (bagging) with only a random subset of features to reduce variance/overfitting, and an ensemble improves prediction power compared to a single tree. Because trees are trained independently in parallel, any form of boosting is not used, which differs from XGBoost. This trades the bias-reduction benefits of boosting for lower sensitivity to noise, since errors are averaged out than sequentially built upon.
+
+We selected Random Forest as a tree-based baseline for three main reasons. Firstly, Random Forest is one of the most well-established and widely-used algorithms for tabular classification tasks, which makes it a competitive reference against more complex models (XGBoost, MLP). Secondly, we wanted to evaluate whether boosting (XGBoost) meaningfully outperforms bagging (Random Forest) on this specific dataset and problem setting. Lastly, Random Forest extends our learning from lecture concepts such as decision trees and ensembles, making it a motivated choice along the more advanced models.
+
+\subsection{XGBoost}
+
+XGBoost stands for Extreme Gradient Boosting and is an ML framework that provides a gradient-boosted decision tree (GBDT) implementation that is scalable and distributed. Similar to Random Forest and the topics we learned in class, a GBDT is an ensemble decision tree learning algorithm. RF builds decision trees independently in parallel via bagging, while XGBoost uses gradient boosting to build a new tree that learns from the previous tree's ``mistakes.'' These errors are represented by setting an objective function and minimizing it using the gradient descent algorithm to create the targeted outcome for the next model.
+
+XGBoost extends gradient boosting through its use of both the first and second order gradient statistics (gradient and Hessian) on the loss function to find the optimal score, leading to fast convergence and a better tree structure. The objective is also regularized using both L1 (lasso) and L2 (ridge) regularization in the objective function itself to decrease overfitting. It also takes advantage of shrinkage, which scales new weights by a factor after a step of boosting and thus ensures no one tree has too much influence, and row/column subsampling, which introduces randomness similar to the random forest algorithm. It also uses sparsity-aware splitting to handle missing/sparse features, and a weighted quantile sketch to find efficient splits, making it robust and scalable.
+
+We selected XGBoost as the advanced/novel model in our project for three main reasons. Firstly, XGBoost is widely known as the SOTA ML when it comes to classification problems on tabular data. We wanted to gauge XGBoost's performance on this set of tabular data with a large number of features. Secondly, we wanted to compare tree-based models vs MLP on tabular data (with logistic regression as a baseline). Neural networks are rising in popularity, however, we wanted to show that deep learning approaches may not be the most optimal, as we found that tree-based models outperformed it in a tabular setting.  Lastly, XGBoost extends many concepts covered in lecture (decision trees, ensembles, gradient descent), making it a motivated choice.
 
 \section{Evaluation Setup}
-\textbf{Protocol.} All models were trained on the same processed training split
-and evaluated on the same held-out test split, with 3-fold cross-validation on
-the training data for model selection. \textbf{Metrics.} ROC-AUC was used for
-cross-validation because it measures ranking quality without fixing a decision
+All models were trained on the same processed training split
+and evaluated on the same test split, with 3-fold cross-validation on
+the training data for model selection. \textbf{Metrics:} ROC-AUC was used as the metric for
+cross-validation as it measures the model's ability to rank positives above negatives (handling imbalance) without fixing a decision
 threshold. Precision, recall, and F1 were then reported on the test set because
-intrusion detection must balance false alarms against missed attacks.
-\textbf{Tuning.} Each model was tuned with RandomizedSearchCV using search
-spaces broad enough to cover simpler and more expressive settings without
-becoming computationally excessive. \textbf{Threshold analysis.} After fitting
+a robust model must balance false alarms against missed attacks.
+\textbf{Tuning:} Model hyperparameters were tuned with RandomizedSearchCV using search
+spaces that cover simpler and more expressive settings without
+becoming computationally excessive. \textbf{Threshold analysis:} After fitting
 the best cross-validated model, thresholds from 0.01 to 0.99 were swept and
-the threshold maximizing attack-class F1 was selected. For logistic regression,
-random forest, and XGBoost, the tuned predictions were also joined back to the
-raw attack\_cat labels to compare attack-family difficulty.
+the threshold maximizing attack-class F1 was selected. The goal was to see the optimal threshold that would
+maximize each model's ability to distinguish between false and real attacks. Additionally, the tuned predictions were also joined back to the
+raw \texttt{attack\_cat} labels to find out which attack category models struggle to classify.
 
 \section{Model and Tuning Summary}
 \begin{table}[htbp]
@@ -65,8 +86,8 @@ raw attack\_cat labels to compare attack-family difficulty.
         None, 10, 20, 30, and 40; min\_samples\_split values 2, 5, 10, and 20;
         min\_samples\_leaf values 1, 2, 4, and 8; max\_features values sqrt,
         log2, 0.3, and 0.5; and bootstrap values True and False. Best:
-        n\_estimators = 500, max\_depth = 30, min\_samples\_split = 10,
-        min\_samples\_leaf = 1, max\_features = sqrt, bootstrap = False. \\
+        n\_estimators = 300, max\_depth = 10, min\_samples\_split = 20,
+        min\_samples\_leaf = 4, max\_features = 0.3, bootstrap = True. \\
         \addlinespace[0.3em]
         XGBoost &
         Gradient-boosted tree ensemble; selected as the most advanced model in
@@ -77,10 +98,10 @@ raw attack\_cat labels to compare attack-family difficulty.
         0.2; subsample and colsample\_bytree values 0.6, 0.7, 0.8, and 1.0;
         min\_child\_weight values 1, 3, and 5; gamma values 0, 0.1, 0.3, and
         0.5; reg\_alpha values 0, 0.1, 0.5, and 1.0; and reg\_lambda values
-        0.5, 1.0, 2.0, and 5.0. Best: n\_estimators = 700, max\_depth = 8,
-        learning\_rate = 0.01, subsample = 1.0, colsample\_bytree = 0.7,
-        min\_child\_weight = 5, gamma = 0.3, reg\_alpha = 0,
-        reg\_lambda = 1.0. \\
+        0.5, 1.0, 2.0, and 5.0. Best: n\_estimators = 1000, max\_depth = 4,
+        learning\_rate = 0.01, subsample = 0.7, colsample\_bytree = 0.8,
+        min\_child\_weight = 1, gamma = 0.1, reg\_alpha = 1.0,
+        reg\_lambda = 2.0. \\
         \bottomrule
     \end{tabularx}
 \end{table}
@@ -96,35 +117,39 @@ raw attack\_cat labels to compare attack-family difficulty.
         \toprule
         Model & CV ROC-AUC & Test ROC-AUC & Best threshold & Tuned F1 & Takeaway \\
         \midrule
-        Logistic Regression & 0.9435 & 0.9586 & 0.05 & 0.9080 & Most interpretable; weakest ranking performance, but competitive after threshold tuning. \\
-        MLP & 0.9508 & 0.9549 & — & — & Neural network baseline; weakest test ROC-AUC among the four models, with Fuzzers being the hardest attack category at 44.75\% recall. \\
-        Random Forest & 0.9871 & 0.9736 & 0.04 & 0.9091 & Strong tabular baseline with excellent attack-family recall. \\
-        XGBoost & 0.9897 & 0.9761 & 0.04 & 0.9154 & Best overall balance of validation ROC-AUC, test ROC-AUC, and tuned F1. \\
+        Logistic Regression & 0.9435 & 0.9586 & 0.05 & 0.9080 & Most interpretable; weakest ranking performance, but competitive after threshold tuning. Highest Fuzzers recall across all models (0.9591). \\
+        MLP & 0.9508 & 0.9549 & 0.83 & 0.8425 & Weakest tuned F1 among all four models; Fuzzers is by far its hardest category at 0.4475 recall. \\
+        Random Forest & 0.9484 & 0.9729 & 0.04 & 0.9091 & Best test ROC-AUC overall; strong and consistent across attack families. \\
+        XGBoost & 0.9601 & 0.9695 & 0.04 & 0.9154 & Best cross-validation ROC-AUC and best tuned F1; marginally behind Random Forest on held-out test ROC-AUC. \\
         \bottomrule
     \end{tabularx}
 \end{table}
 
-All four models improved noticeably after threshold tuning, showing that the
-default threshold of 0.50 is too conservative for this intrusion-detection
-setting. Logistic regression improved from 0.7899 to 0.9080, random forest
-from 0.8471 to 0.9091, and XGBoost from 0.8466 to 0.9154. This is direct
-evidence that the hyperparameter and threshold choices were reasonable: the
-selected configurations were non-default and the threshold sweep produced
+All four models improved after threshold tuning compared to the default 0.50
+threshold. Logistic Regression improved from 0.7899 to 0.9080, Random Forest
+from 0.8471 to 0.9091, XGBoost from 0.8466 to 0.9154, and MLP from 0.8067 to
+0.8425. This confirms that the default threshold is too conservative for this
+intrusion-detection setting and that the threshold sweep produced meaningfully
 better operating points for attack detection.
 
-The tree-based models achieved the strongest ROC-AUC values, showing that the
-intrusion features contain important nonlinear structure. XGBoost is the final
-selected model because it achieved the best cross-validated ROC-AUC (0.9897),
-the best test ROC-AUC (0.9761), and the best tuned F1 (0.9154). Random forest
-was close behind and was especially strong on raw attack families, while
-logistic regression remained the easiest model to interpret. MLP achieved a
-test ROC-AUC of 0.9549 and a CV ROC-AUC of 0.9508, the lowest among all four
-models. At the tuned threshold, logistic regression was weakest on
-\textit{Fuzzers} (0.9591 recall), random forest was weakest on
-\textit{Analysis} and \textit{Fuzzers} (both 0.8614), XGBoost improved
-\textit{Fuzzers} to 0.9648 while keeping \textit{Analysis} as its hardest
-group at 0.8645, and MLP struggled most on \textit{Fuzzers} at only 0.4475
-recall — the lowest Fuzzers recall across all models.
+The two tree-based models achieved the strongest overall scores. Random Forest
+achieved the highest test ROC-AUC (0.9729), while XGBoost led on
+cross-validation ROC-AUC (0.9601) and tuned F1 (0.9154). The gap between
+them is small — 0.0034 on test ROC-AUC — and the two models produced
+identical per-attack-category recall after threshold tuning: Fuzzers was the
+hardest category for both at 0.6255 recall, followed by Analysis at 0.8812,
+with all remaining categories at 0.9656 or higher and Worms reaching perfect
+recall (1.0000). The close performance between Random Forest and XGBoost is
+consistent with the nearly balanced class distribution in this dataset, which
+limits the gradient signal that boosting can exploit.
+
+Logistic Regression, despite being the simplest model, remained competitive
+after tuning (F1 = 0.9080) and achieved the highest Fuzzers recall across all
+four models at 0.9591, with Analysis being its weakest category at 0.9586.
+This suggests Fuzzers may be more linearly separable than expected. MLP
+achieved a test ROC-AUC of 0.9549 and a tuned F1 of 0.8425 — the lowest
+among all four models — with Fuzzers being by far its hardest category at
+only 0.4475 recall, the lowest Fuzzers recall across all models.
 
 \end{spacing}
 \newpage

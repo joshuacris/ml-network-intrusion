@@ -2,136 +2,20 @@
 \begin{spacing}{1.3}
 
 \section{Dataset Description}
-We use the UNSW-NB15 network intrusion dataset from Kaggle
-\cite{kaggle_unsw_nb15}. At a high level, this dataset represents network
-traffic as tabular flow records rather than raw packets. Each row corresponds
-to one network-flow example and includes 49 original traffic features together
-with an attack category and a binary class label that indicates whether the
-flow is normal or malicious. The dataset includes normal traffic as well as nine attack categories:
-Fuzzers, Analysis, Backdoors, DoS, Exploits, Generic, Reconnaissance,
-Shellcode, and Worms \cite{kaggle_unsw_nb15}. Since the goal of our project is
-binary intrusion detection, we use the binary label and treat all attack
-categories as a single positive class. The Kaggle dataset already provides predefined training and testing files, and
-we use these splits directly. After duplicate removal, the training set contains 107,740 records and the test set contains 55,945 records.
-Among the 49 original features, the raw dataset
-contains three categorical variables, \texttt{proto}, \texttt{service}, and
-\texttt{state}, together with 37 numerical traffic features. Detailed feature
-descriptions can be viewed on the Kaggle dataset page
-\cite{kaggle_unsw_nb15}.
+
+Our dataset, as explained in Section 1.1, is the UNSW-NB15 dataset \cite{kaggle_unsw_nb15}. This dataset contains records representing network traffic labelled as either normal or attack and has 49 columns, such as \texttt{sbytes}, representing transaction bytes from source to destination or \texttt{sloss}, being dropped source packets. The full data dictionary can be found under \texttt{data/raw/data\_dict\_UNSW-NB15\_features.csv}. Our task is binary classfication, to predict whether a record in normal (0) or an attack (1). The dataset is pre-split into a training set of 107,740 records and a test set of 55,945 records after duplicate removal.
 
 \section{Data Exploration}
 
-\subsection{Class Balance}
-The training set is nearly balanced: 51,890 normal flows (48.2\%) and 55,850
-attack flows (51.8\%). This means class imbalance is not a significant concern
-for most models, and standard metrics such as accuracy, F1, and ROC-AUC are
-informative without requiring resampling.
-
-\subsection{Skewness and Feature Distributions}
-Exploratory analysis showed that 14 numerical features were heavily right-skewed,
-including \texttt{sload}, \texttt{dload}, \texttt{sbytes}, \texttt{dbytes},
-\texttt{sjit}, \texttt{djit}, \texttt{rate}, \texttt{sinpkt}, \texttt{dinpkt},
-\texttt{spkts}, \texttt{dpkts}, \texttt{sloss}, \texttt{dloss}, and
-\texttt{response\_body\_len}. These features exhibit ranges spanning up to
-$10^9$, with the vast majority of values compressed near zero. On a linear
-scale, values of 1,000 and 1,000,000 appear nearly identical despite a
-1,000$\times$ difference in magnitude — a difference that is highly
-discriminative for detecting traffic anomalies. Figure~\ref{fig:skewness-log1p}
-in Appendix~A shows the raw and log-transformed distributions for all 14 features.
-
-\subsection{Categorical Feature Distributions}
-The three categorical features contain many rare values. For example,
-\texttt{proto} has 131 unique values, but only 6 have counts of at least 100.
-Figure~\ref{fig:categorical-buckets} in Appendix~A shows the dominance of a
-few top categories in each feature, directly motivating the bucketing approach
-described in Section~2.3.
-
-\subsection{Correlation}
-Correlation analysis identified 11 feature pairs with $|r| > 0.9$, including
-\texttt{dloss}--\texttt{dbytes} (0.997), \texttt{sloss}--\texttt{sbytes}
-(0.996), \texttt{dpkts}--\texttt{dbytes} (0.978), \texttt{spkts}--\texttt{sbytes}
-(0.966), and \texttt{tcprtt}--\texttt{synack} (0.935). No features were dropped
-on this basis — tree-based models are robust to correlated inputs, and removing
-features could degrade Logistic Regression's performance. The full heatmap is
-shown in Figure~\ref{fig:correlation-heatmap} in Appendix~A.
+In our training set, our records are split 48.2\% normal (51,890) and 51.8\% attack (55,850). We have a nearly balanced training set, however, the test set is less balanced, having 61.1\% normal records (34,206) and 38.9\% attack (21,739). In our EDA, we found 14 heavily right-skewed numerical features (such as \texttt{sload, sbytes}) having ranges up to $10^9$. Three categorical features had a large amount of unique values (\texttt{proto, service, state}), as well as 11 pairs with high correlation ($|r| > 0.9$). Figures A.1 - A.3 in the appendix plot the raw numerical data and the log transformations we applied, as well as the categorical frequency plots, and the correlation heatmap.
 
 \section{Data Cleaning and Feature Engineering}
 
-\subsection{Duplicate Removal}
-Both the training and test sets contained duplicate records (rows identical
-across all columns except \texttt{id}). These were removed before any
-preprocessing to prevent data leakage — a duplicate present in both the
-training and test sets would artificially inflate evaluation metrics.
+To prevent data leakage, we removed duplicate rows from both training and test sets before preprocessing. We also removed the columns \texttt{id} (row identifier), \texttt{attack\_cat} (the multi-class label), and \texttt{stcpb}/\texttt{dtcpb} (random sequence numbers). All categorical features were one-hot encoded and condensed by putting categories with rare values into an \texttt{other} category. We also applied a log transformation ($log(1 + x)$) on our skewed numerical features to make the data more normal. Numerical features were standardized using \texttt{StandardScaler} for logistic regression and MLP models, while the tree-based models use the raw values as they are invariant to scaling.
 
-\subsection{Irrelevant Column Removal}
-We remove four columns before model fitting:
-\begin{itemize}
-    \item \texttt{id}, because it is only a row identifier and carries no predictive signal;
-    \item \texttt{attack\_cat}, because the task is binary intrusion detection rather than multi-class attack-type prediction;
-    \item \texttt{stcpb} and \texttt{dtcpb}, because these TCP base sequence numbers behave more like connection identifiers than stable behavioural features.
-\end{itemize}
+\section{Data Representation and Splitting}
 
-\subsection{Categorical Bucketing and One-Hot Encoding}
-Rare categorical values are bucketed into an \texttt{other} category before
-one-hot encoding. We inspected the frequency distributions of
-\texttt{proto}, \texttt{service}, and \texttt{state} and retained the most
-common levels, summarized in
-\hyperref[tab:categorical-retained]{Appendix~A, Table~\ref*{tab:categorical-retained}}.
-After bucketing, one-hot encoding produces $7 + 9 + 5 = 21$ binary indicator
-columns. The column set is fit on the training set and applied to the test set,
-with any unseen categories filled with zeros.
+Two datasets are derived from our preprocessing pipeline: \textbf{\texttt{(training)/(test)\_lr\_mlp}} (scaled numericals, used by Logistic Regression and MLP) and \textbf{\texttt{(training)/(test)\_xgb\_rf}} (raw numericals, used by Random Forest and XGBoost), which both have 58 columns plus the label. Preprocessing methods such as the \texttt{StandardScaler} are saved with \texttt{joblib}, which are used to process the test set. For all models, hyperparameter tuning uses \texttt{RandomizedSearchCV} with 3-fold cross-validation on the training set, with evaluation on the test set.
 
-\subsection{Log Transformation}
-We apply $\log(1+x)$ to the 14 heavily skewed numerical features. We use
-$\log(1+x)$ rather than $\log(x)$ because many features contain zero values,
-and $\log(0)$ is undefined. The $\log(1+x)$ form maps zero to zero and
-preserves the ordering and relative magnitudes of all values while compressing
-the extreme range.
-
-\subsection{Feature Scaling}
-For models sensitive to feature scale (Logistic Regression and MLP), we apply
-\texttt{StandardScaler} to all numerical features after log transformation.
-The scaler is fit exclusively on the training set and applied to the test set
-using the saved mean and variance, preventing any test-set information from
-leaking into the scaling parameters. Tree-based models (Random Forest and
-XGBoost) are scale-invariant by construction — splits depend only on feature
-ordering, not magnitude — so no scaling is applied for these models.
-
-All preprocessing artifacts (fitted scaler, one-hot column sets, column lists)
-are serialized using \texttt{joblib} and reused for test set transformation,
-ensuring a consistent and leakage-free pipeline.
-
-\section{Data Representation and Final Datasets}
-We maintain two model-specific representations derived from the same cleaned
-data:
-\begin{itemize}
-    \item \textbf{\texttt{df\_model}}: 21 one-hot encoded categorical indicators and 37 scaled numerical features (log-transformed where applicable, then standardized). Used by Logistic Regression and MLP.
-    \item \textbf{\texttt{df\_model\_tree}}: the same 21 one-hot encoded indicators combined with the 37 raw (unscaled) numerical features. Used by Random Forest and XGBoost.
-\end{itemize}
-
-Both matrices contain 58 predictors plus the label column.
-
-For hyperparameter tuning, we keep the predefined Kaggle training/testing
-split fixed and use \texttt{RandomizedSearchCV} with 3-fold cross-validation
-on the training split only. The test split remains untouched until final
-evaluation. Table~\ref{tab:data-split-summary} reports the final model-ready
-dataset sizes after duplicate removal.
-
-\begin{table}[htbp]
-    \centering
-    \small
-    \setlength{\tabcolsep}{4pt}
-    \renewcommand{\arraystretch}{0.95}
-    \caption{Final model-ready dataset sizes after duplicate removal.}
-    \label{tab:data-split-summary}
-    \begin{tabularx}{\linewidth}{l c c c}
-        \toprule
-        Split & Total Rows & Normal & Attack \\
-        \midrule
-        Training & 107{,}740 & 51{,}890 (48.2\%) & 55{,}850 (51.8\%) \\
-        Test     &  55{,}945 & 34{,}206 (61.1\%) & 21{,}739 (38.9\%) \\
-        \bottomrule
-    \end{tabularx}
-\end{table}
 
 \end{spacing}
