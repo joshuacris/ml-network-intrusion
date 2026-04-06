@@ -7,7 +7,34 @@ Short dummy text goes here. Explain how this project differs from prior work or 
 
 \section{Future Work}
 
-Short dummy text goes here. Suggest extensions, improvements, or open research questions.
+One possible direction for future work would be to replace the scikit-learn \texttt{MLPClassifier} with a deep learning
+framework such as PyTorch or Keras. While scikit-learn’s MLP is simple and sufficient for a baseline, it lacks several
+important training features. It does not support dropout, a regularization technique that randomly deactivates neurons 
+during training to reduce overfitting and improve generalization. It also lacks batch normalization, which stabilizes 
+training by keeping activations consistent across layers — something that becomes increasingly important in deeper architectures.
+Additionally, scikit-learn does not allow per-class or per-sample loss weighting, meaning the model cannot be directed to penalize
+false negatives more heavily than false positives. In a cybersecurity context, this is a significant limitation since missing an
+attack is typically far more costly than a false alarm. Switching to PyTorch or Keras would address all of these issues and open
+the door to custom loss functions such as focal loss, which focuses training on hard-to-classify examples, as well as more advanced
+learning rate strategies such as cosine annealing or warm restarts.
+
+This is particularly relevant given that Fuzzers were the hardest attack type to detect across all models in this study, achieving
+only 44.75\% recall in MLP and around 62\% in both tree-based models. A more expressive and configurable neural network trained with
+focal loss could force the model to focus on these ambiguous samples rather than the easier categories it already handles well. 
+Oversampling the Fuzzers class could help improve performance further. Interestingly, Logistic Regression achieved the highest
+Fuzzers recall (95.91), suggesting the class may be more linearly separable than expected and that more complex models may be overfitting.
+Future work could explore using Logistic Regression specifically for Fuzzers detection as part of an ensemble model.
+
+Another promising direction is model ensembling or stacking. In this study, Logistic Regression, Random Forest, XGBoost, and MLP were
+each evaluated independently, yet each model showed different strengths across attack categories. For example, Logistic Regression 
+achieved the highest Fuzzers recall while tree-based models excelled on other categories. Rather than selecting a single best model,
+a stacking approach could combine the predictions of all four models using a meta-learner, allowing the ensemble to exploit the 
+complementary strengths of each classifier.
+
+Finally, all models in this study were trained and evaluated exclusively on the UNSW-NB15 dataset, which was collected in a controlled
+lab environment in 2015. This raises questions about how well these models would generalize to real-world traffic or more recent datasets
+such as CIC-IDS2017. Since network traffic and attack patterns evolve over time, cross-dataset validation would be a valuable next step 
+to better assess the true generalizability of these models.
 
 \end{spacing}
 \newpage
