@@ -51,9 +51,11 @@ raw attack\_cat labels to compare attack-family difficulty.
         Tried
         hidden\_layer\_sizes from single- and multi-layer layouts between
         (32) and (256,128,64,32), activation values relu and tanh,
-        learning\_rate\_init values 1e-3, 1e-4, 3e-4, and 5e-4, and alpha
-        values 1e-4, 1e-3, and 1e-2. Best: hidden\_layer\_sizes = (256,128),
-        activation = relu, learning\_rate\_init = 0.0001, alpha = 0.001. \\
+        learning\_rate\_init values 1e-2, 1e-3, 5e-4, 3e-4, and 1e-4, alpha
+        values 1e-4, 1e-3, 1e-2, 0.1, and 1.0, and batch\_size values 32, 64,
+        128, and 256. Best: hidden\_layer\_sizes = (128,64),
+        activation = tanh, learning\_rate\_init = 0.01, alpha = 0.01,
+        batch\_size = 128. \\
         \addlinespace[0.3em]
         Random Forest &
         Bagged ensemble of decision trees; selected as a strong tabular
@@ -95,7 +97,7 @@ raw attack\_cat labels to compare attack-family difficulty.
         Model & CV ROC-AUC & Test ROC-AUC & Best threshold & Tuned F1 & Takeaway \\
         \midrule
         Logistic Regression & 0.9435 & 0.9586 & 0.05 & 0.9080 & Most interpretable; weakest ranking performance, but competitive after threshold tuning. \\
-        MLP & 0.9877 & 0.9693 & 0.01 & 0.9121 & Strong nonlinear baseline with better tuned recall/F1 than the linear model. \\
+        MLP & 0.9508 & 0.9549 & — & — & Neural network baseline; weakest test ROC-AUC among the four models, with Fuzzers being the hardest attack category at 44.75\% recall. \\
         Random Forest & 0.9871 & 0.9736 & 0.04 & 0.9091 & Strong tabular baseline with excellent attack-family recall. \\
         XGBoost & 0.9897 & 0.9761 & 0.04 & 0.9154 & Best overall balance of validation ROC-AUC, test ROC-AUC, and tuned F1. \\
         \bottomrule
@@ -104,24 +106,25 @@ raw attack\_cat labels to compare attack-family difficulty.
 
 All four models improved noticeably after threshold tuning, showing that the
 default threshold of 0.50 is too conservative for this intrusion-detection
-setting. Logistic regression improved from 0.7899 to 0.9080, MLP from 0.8202
-to 0.9121, random forest from 0.8471 to 0.9091, and XGBoost from 0.8466 to
-0.9154. This is direct evidence that the hyperparameter and threshold choices
-were reasonable: the selected configurations were non-default and the threshold
-sweep produced better operating points for attack detection.
+setting. Logistic regression improved from 0.7899 to 0.9080, random forest
+from 0.8471 to 0.9091, and XGBoost from 0.8466 to 0.9154. This is direct
+evidence that the hyperparameter and threshold choices were reasonable: the
+selected configurations were non-default and the threshold sweep produced
+better operating points for attack detection.
 
 The tree-based models achieved the strongest ROC-AUC values, showing that the
 intrusion features contain important nonlinear structure. XGBoost is the final
 selected model because it achieved the best cross-validated ROC-AUC (0.9897),
 the best test ROC-AUC (0.9761), and the best tuned F1 (0.9154). Random forest
 was close behind and was especially strong on raw attack families, while
-logistic regression remained the easiest model to interpret. At the tuned
-threshold, logistic regression was weakest on \textit{Analysis} (0.9586 recall)
-and \textit{Fuzzers} (0.9591), random forest was weakest on those same groups
-(both 0.8614), and XGBoost improved \textit{Fuzzers} to 0.9648 while keeping
-\textit{Analysis} as its hardest group at 0.8645. The MLP discussion is
-limited to overall metrics because its notebook-level attack-category analysis
-will be corrected separately.
+logistic regression remained the easiest model to interpret. MLP achieved a
+test ROC-AUC of 0.9549 and a CV ROC-AUC of 0.9508, the lowest among all four
+models. At the tuned threshold, logistic regression was weakest on
+\textit{Fuzzers} (0.9591 recall), random forest was weakest on
+\textit{Analysis} and \textit{Fuzzers} (both 0.8614), XGBoost improved
+\textit{Fuzzers} to 0.9648 while keeping \textit{Analysis} as its hardest
+group at 0.8645, and MLP struggled most on \textit{Fuzzers} at only 0.4475
+recall — the lowest Fuzzers recall across all models.
 
 \end{spacing}
 \newpage
