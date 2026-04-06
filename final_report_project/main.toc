@@ -4,19 +4,28 @@
 \contentsline {chapter}{\numberline {2}Data Preprocessing}{2}{chapter.2}%
 \contentsline {section}{\numberline {2.1}Dataset Description}{2}{section.2.1}%
 \contentsline {section}{\numberline {2.2}Data Exploration}{2}{section.2.2}%
-\contentsline {section}{\numberline {2.3}Data Cleaning and Feature Engineering}{2}{section.2.3}%
-\contentsline {section}{\numberline {2.4}Data Representation and Final Datasets}{3}{section.2.4}%
+\contentsline {subsection}{\numberline {2.2.1}Class Balance}{2}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Skewness and Feature Distributions}{2}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Categorical Feature Distributions}{2}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Correlation}{3}{subsection.2.2.4}%
+\contentsline {section}{\numberline {2.3}Data Cleaning and Feature Engineering}{3}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Duplicate Removal}{3}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Irrelevant Column Removal}{3}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}Categorical Bucketing and One-Hot Encoding}{3}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.4}Log Transformation}{3}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.5}Feature Scaling}{3}{subsection.2.3.5}%
+\contentsline {section}{\numberline {2.4}Data Representation and Final Datasets}{4}{section.2.4}%
 \contentsline {chapter}{\numberline {3}Model Comparison Study}{4}{chapter.3}%
 \contentsline {section}{\numberline {3.1}Evaluation Setup}{4}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Model and Tuning Summary}{4}{section.3.2}%
-\contentsline {section}{\numberline {3.3}Results Comparison}{4}{section.3.3}%
-\contentsline {chapter}{\numberline {4}Originality and Future Work}{6}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Originality}{6}{section.4.1}%
-\contentsline {section}{\numberline {4.2}Future Work}{6}{section.4.2}%
-\contentsline {chapter}{\numberline {5}Conclusion}{7}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Conclusion}{7}{section.5.1}%
-\contentsline {chapter}{\numberline {A}Appendix}{8}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Exploratory Plots}{8}{section.A.1}%
-\contentsline {section}{\numberline {A.2}Feature Breakdown}{11}{section.A.2}%
-\contentsline {section}{\numberline {A.3}Categorical Frequency Tables}{12}{section.A.3}%
-\contentsline {chapter}{References}{13}{appendix*.10}%
+\contentsline {section}{\numberline {3.2}Model and Tuning Summary}{5}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Results Comparison}{5}{section.3.3}%
+\contentsline {chapter}{\numberline {4}Originality and Future Work}{7}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Originality}{7}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Future Work}{7}{section.4.2}%
+\contentsline {chapter}{\numberline {5}Conclusion}{8}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Conclusion}{8}{section.5.1}%
+\contentsline {chapter}{\numberline {A}Appendix}{9}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Exploratory Plots}{9}{section.A.1}%
+\contentsline {section}{\numberline {A.2}Feature Breakdown}{12}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Categorical Frequency Tables}{13}{section.A.3}%
+\contentsline {chapter}{References}{14}{appendix*.10}%
