@@ -91,3 +91,8 @@ At the tuned threshold, all attack categories achieve perfect precision (1.0), m
 
 **Fuzzers** remain the hardest attack type to detect (recall = 0.4475), consistent with how fuzzing generates randomized or mutated inputs that can resemble normal traffic. **Backdoor** and **Exploits** attacks are detected with near-perfect recall, likely because they produce distinctive and consistent network signatures.
 
+## Sources
+
+Pedregosa, F. et al. "Scikit-learn: Machine learning in Python." Journal of Machine Learning Research 12 (2011): 2825-2830.
+
+GeeksforGeeks. "Multi-Layer Perceptron Learning in TensorFlow." https://www.geeksforgeeks.org/deep-learning/multi-layer-perceptron-learning-in-tensorflow/
