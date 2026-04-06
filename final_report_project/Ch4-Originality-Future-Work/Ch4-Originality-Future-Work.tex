@@ -3,7 +3,22 @@
 
 \section{Originality}
 
-Short dummy text goes here. Explain how this project differs from prior work or standard baselines.
+Most studies that compare models on network intrusion detection datasets stick with a default classification threshold of 0.5.
+In this project, we adopt a different approach by tuning the classification threshold for each model rather than treating it as
+fixed. We test values from 0.01 to 0.99 and pick the one that gives the best F1 score, then compare those results to the standard
+0.5 threshold using confusion matrices and full classification reports.
+
+The reason for this is practical: in cybersecurity, missing an attack (a false negative) is usually far worse than raising a false
+alarm. By adjusting the threshold with that trade-off in mind, we end up with models that are more useful in real-world scenarios,
+not just ones that look good based on overall accuracy.
+
+We also go beyond reporting a single performance number. Instead of only looking at overall metrics, we break down how each model
+performs across the nine attack categories in the UNSW-NB15 dataset using the attack_cat feature. This gives a clearer picture of
+where each model succeeds and where it struggles.
+
+This more detailed analysis revealed some interesting differences. For example, Fuzzers turned out to be the hardest attack type 
+to detect for all models. At the same time, Logistic Regression — despite being the simplest model we tested — actually performed
+the best on that category.
 
 \section{Future Work}
 
