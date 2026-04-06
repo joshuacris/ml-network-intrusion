@@ -1,7 +1,7 @@
 \contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
 \contentsline {section}{\numberline {1.1}Problem Statement}{1}{section.1.1}%
 \contentsline {section}{\numberline {1.2}Existing Approaches and Our Direction}{1}{section.1.2}%
-\contentsline {chapter}{\numberline {2}Data Collection, Preprocessing, and Representation}{2}{chapter.2}%
+\contentsline {chapter}{\numberline {2}Data Preprocessing}{2}{chapter.2}%
 \contentsline {section}{\numberline {2.1}Dataset Description}{2}{section.2.1}%
 \contentsline {section}{\numberline {2.2}Data Exploration}{2}{section.2.2}%
 \contentsline {section}{\numberline {2.3}Data Cleaning and Feature Engineering}{2}{section.2.3}%
@@ -19,3 +19,4 @@
 \contentsline {section}{\numberline {A.1}Exploratory Plots}{8}{section.A.1}%
 \contentsline {section}{\numberline {A.2}Feature Breakdown}{11}{section.A.2}%
 \contentsline {section}{\numberline {A.3}Categorical Frequency Tables}{12}{section.A.3}%
+\contentsline {chapter}{References}{13}{appendix*.10}%
