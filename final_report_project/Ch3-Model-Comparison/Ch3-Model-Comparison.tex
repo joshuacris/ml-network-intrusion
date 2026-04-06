@@ -41,7 +41,7 @@ the threshold maximizing attack-class F1 was selected. Our goal, which differs f
 maximize each model's ability to distinguish between false and real attacks. The default 0.5 threshold may not be optimal as the model may miss attacks due to being conservative. The tuned predictions were also joined back to the
 raw \texttt{attack\_cat} labels to find out which attack category models struggle to classify.
 
-\section{Model and Tuning Summary and Results Comparison}
+\section{Model and Tuning Summary and Main Results}
 \begin{table}[htbp]
     \centering
     \footnotesize
@@ -95,10 +95,10 @@ from 0.8062 to 0.8784, XGBoost from 0.8175 to 0.8680, and MLP from 0.8067 to
 0.8425. This confirms that threshold tuning produces meaningfully better
 operating points for all models. The CV and test ROC-AUC scores are closely
 aligned across all models (e.g.\ XGBoost: CV 0.9601 vs.\ test 0.9695; RF: CV
-0.9484 vs.\ test 0.9729), indicating the tuned configurations generalise well, providing evidence that the hyperparameter search spaces were well-chosen.
+0.9484 vs.\ test 0.9729), indicating the tuned configurations generalize well, providing evidence that the hyperparameter search spaces were well-chosen.
 
-XGBoost achieved the best CV ROC-AUC (0.9601) and is selected as the final
-model, as CV ROC-AUC was the primary optimization metric. Random Forest
+\textbf{XGBoost} achieved the best CV ROC-AUC (0.9601) and is \textbf{selected as the final
+model}, as CV ROC-AUC was the primary optimization metric. Random Forest
 achieved the highest test ROC-AUC (0.9729 vs.\ XGBoost's 0.9695) and tuned F1
 (0.8784 vs.\ 0.8680) by a small gap. Logistic Regression
 achieved the highest tuned F1 across all four models (0.9080), showing
