@@ -5,8 +5,27 @@
 \begin{spacing}{1.3}
 \setlength{\parskip}{0.22in}
 
-Short dummy text goes here. Write a brief summary of the problem, methods, and main findings.
-
+This project compares four supervised models for binary network intrusion
+detection on the UNSW-NB15 dataset: Logistic Regression, Multi-Layer
+Perceptron (MLP), Random Forest, and XGBoost. After removing 26{,}387
+duplicate training rows, grouping rare categorical values, applying log
+transformations to 14 highly skewed numerical features, and building
+model-specific tabular representations with 58 predictors, we trained on
+55{,}945 flows and evaluated on a held-out test set of 107{,}740 flows.
+Hyperparameters were tuned with RandomizedSearchCV using 3-fold
+cross-validation and ROC-AUC, and final classification thresholds were chosen
+by sweeping thresholds from 0.01 to 0.99 to maximize attack-class F1. All
+models improved substantially after threshold tuning: Logistic Regression
+reached a tuned F1 of 0.9080, MLP 0.9121, Random Forest 0.9091, and XGBoost
+0.9154. XGBoost also achieved the best validation ROC-AUC (0.9897) and test
+ROC-AUC (0.9761), while Logistic Regression remained the most interpretable
+baseline and the tree-based models achieved the strongest overall ranking
+performance. Per-attack-category analysis showed that Analysis was the hardest
+attack family across models, while Generic, Backdoor, Worms, and Exploits were
+detected almost perfectly. Overall, the comparison shows that nonlinear
+ensemble methods are best suited to this tabular intrusion-detection task, and
+XGBoost provides the best overall trade-off between detection quality,
+robustness, and practical usefulness.
 \end{spacing}
 
 \vspace{1em}
