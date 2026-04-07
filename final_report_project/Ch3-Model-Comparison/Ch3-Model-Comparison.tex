@@ -81,41 +81,41 @@ raw \texttt{attack\_cat} labels to find out which attack category models struggl
         \toprule
         Model & CV ROC-AUC & Test ROC-AUC & Default F1 & Best Threshold & Tuned F1 & Takeaway \\
         \midrule
-        Logistic Regression & 0.9435 & 0.9586 & 0.7899 & 0.05 & 0.9080 & Most interpretable; highest tuned F1 across all models. Highest Fuzzers recall (0.9591). \\
-        MLP                 & 0.9508 & 0.9549 & 0.8067 & 0.83 & 0.8425 & Weakest tuned F1; Fuzzers is by far its hardest category at 0.4475 recall. \\
-        Random Forest       & 0.9484 & 0.9729 & 0.8062 & 0.74 & 0.8784 & Best test ROC-AUC; second-best tuned F1 among tree-based models. \\
-        XGBoost             & 0.9601 & 0.9695 & 0.8175 & 0.69 & 0.8680 & Best CV ROC-AUC; selected as final model. \\
+        Logistic Regression & 0.9435 & 0.9217 & 0.7507 & 0.76 & 0.7811 & Weakest test ROC-AUC and tuned F1; Fuzzers hardest category at 0.4618 recall. \\
+        MLP                 & 0.9884 & 0.9578 & 0.7982 & 0.82 & 0.8571 & High CV ROC-AUC but lower test score suggests mild overfitting; Fuzzers hardest at 0.4694 recall. \\
+        Random Forest       & 0.9484 & 0.9729 & 0.8062 & 0.74 & 0.8784 & Best test ROC-AUC; highest tuned F1 across all models. \\
+        XGBoost             & 0.9601 & 0.9695 & 0.8175 & 0.69 & 0.8680 & Best CV ROC-AUC among tree models; selected as final model. \\
         \bottomrule
     \end{tabularx}
 \end{table}
 
 All four models improved after threshold tuning compared to the default 0.50
-threshold. Logistic Regression improved from 0.7899 to 0.9080, Random Forest
-from 0.8062 to 0.8784, XGBoost from 0.8175 to 0.8680, and MLP from 0.8067 to
-0.8425. This confirms that threshold tuning produces meaningfully better
-operating points for all models. The CV and test ROC-AUC scores are closely
-aligned across all models (e.g.\ XGBoost: CV 0.9601 vs.\ test 0.9695; RF: CV
-0.9484 vs.\ test 0.9729), indicating the tuned configurations generalize well, providing evidence that the hyperparameter search spaces were well-chosen.
+threshold. Logistic Regression improved from 0.7507 to 0.7811, MLP from 0.7982
+to 0.8571, Random Forest from 0.8062 to 0.8784, and XGBoost from 0.8175 to
+0.8680. This confirms that threshold tuning produces meaningfully better
+operating points for all models. The tree-based models show close CV--test
+alignment (XGBoost: CV 0.9601 vs.\ test 0.9695; RF: CV 0.9484 vs.\ test
+0.9729), indicating well-chosen search spaces. MLP shows a larger gap (CV
+0.9884 vs.\ test 0.9578), suggesting mild overfitting on the cross-validation
+folds.
 
-\textbf{XGBoost} achieved the best CV ROC-AUC (0.9601) and is \textbf{selected as the final
-model}, as CV ROC-AUC was the primary optimization metric. Random Forest
-achieved the highest test ROC-AUC (0.9729 vs.\ XGBoost's 0.9695) and tuned F1
-(0.8784 vs.\ 0.8680) by a small gap. Logistic Regression
-achieved the highest tuned F1 across all four models (0.9080), showing
-that the simplest model can produce the best decision boundary after
-threshold tuning. Both tree-based models outperformed MLP on
-ROC-AUC, showing that the tabular features contain a
-structure that tree-based models can adapt to better than an MLP.
+\textbf{XGBoost} achieved the best CV ROC-AUC among tree-based models (0.9601)
+and is \textbf{selected as the final model}, as CV ROC-AUC was the primary
+optimization metric and XGBoost's CV--test gap is small. Random Forest achieved
+the highest test ROC-AUC (0.9729) and highest tuned F1 (0.8784), making it the
+strongest alternative. Logistic Regression produced the weakest test ROC-AUC
+(0.9217) and tuned F1 (0.7811), confirming that a linear boundary is
+insufficient for this dataset. Both tree-based models substantially outperformed
+LR and MLP on test ROC-AUC, showing the tabular features contain nonlinear
+structure that ensemble trees exploit more effectively.
 
-Per-attack-category analysis reveals consistent results between the two
-tree-based models. Fuzzers was the hardest category for all models, with both
-XGBoost and Random Forest achieving 0.6255 recall, showing that the
-randomized nature of fuzzers closely resembles normal records.
-All other categories achieved 0.88 recall or higher for both tree models, with
-Worms reaching perfect recall (1.0000) for XGBoost. Logistic Regression
-achieved the highest Fuzzers recall of all four models at 0.9591, with
-Analysis as its weakest category at 0.9586, suggesting Fuzzers may be
-more linearly separable than expected. MLP struggled most on Fuzzers at only
-0.4475 recall, being the lowest across all models.
+Per-attack-category analysis shows Fuzzers as the hardest category across all
+four models: Logistic Regression achieved 0.4618 recall, MLP 0.4694, and both
+XGBoost and Random Forest 0.6255 --- reflecting the randomized nature of fuzzing
+traffic which closely resembles normal flows. The tree-based models achieved
+0.88 recall or higher on all other categories, with XGBoost reaching perfect
+recall (1.0000) on Worms. MLP performed well on Analysis (0.9955 recall) and
+most categories above 0.93, while Logistic Regression showed consistent but
+lower recall across all categories.
 
 \end{spacing}

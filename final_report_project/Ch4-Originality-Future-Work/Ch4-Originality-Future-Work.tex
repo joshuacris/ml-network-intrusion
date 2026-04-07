@@ -1,5 +1,6 @@
 \chapter{Originality and Future Work}
 \begin{spacing}{1.0}
+\small
 
 \section{Originality}
 
@@ -10,8 +11,7 @@ In this project, we adopt a different approach by tuning the classification thre
 The reason for this is that in cybersecurity applications, missing an attack (a false negative) is usually far worse than raising a false
 alarm. By adjusting the threshold according to this trade-off, we end up with models that are more useful in real-world scenarios rather than benchmarking accuracy.
 
-Instead of only looking at overall metrics, we break down how each model
-performs across the nine attack categories in the UNSW-NB15 dataset using the \texttt{attack\_cat} feature. Kasongo and Sun \cite{kasongo_sun_unsw} similarly study UNSW-NB15 but focus on feature selection and overall accuracy without breaking down performance per attack category. Our per-category analysis gives a clearer picture of each model's strengths and weaknesses — for example, Fuzzers was the hardest attack type to detect for all models, while Logistic Regression, despite being the simplest model, actually performed the best on that category.
+Instead of only looking at overall metrics, we break down how each model performs across the nine attack categories in the UNSW-NB15 dataset using the \texttt{attack\_cat} feature. Kasongo and Sun \cite{kasongo_sun_unsw} similarly study UNSW-NB15 but focus on feature selection and overall accuracy without breaking down performance per attack category. Our per-category analysis gives a clearer picture of each model's strengths and weaknesses. For example, Fuzzers was the hardest attack type to detect for all models.
 
 \section{Future Work}
 
@@ -21,8 +21,7 @@ per-class loss weighting, enabling custom loss functions such as focal loss that
 more heavily, which directly addresses the weakest category across all models in this study.
 
 Another promising direction is model ensembling, stacking, or experimenting with novel models. In this study, Logistic Regression, Random Forest, XGBoost, and MLP were
-each evaluated independently, yet each model showed different strengths across attack categories. For example, Logistic Regression 
-achieved the highest Fuzzers recall while tree-based models excelled on other categories. Rather than selecting a single best model,
+each evaluated independently, yet each model showed different strengths across attack categories. For example, tree-based models excelled on other categories except for Fuzzers. Rather than selecting a single best model,
 a stacking approach could combine the predictions of all four models, allowing the ensemble to exploit the 
 complementary strengths of each classifier. Experimentation with other novel models such as CatBoost, LightGBM, or other deep learning architecture 
 may result in an improvement in performance metrics.
