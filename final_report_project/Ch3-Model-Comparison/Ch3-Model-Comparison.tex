@@ -18,7 +18,7 @@ The basic workflow of the MLP can be simplified via forward propagation, loss fu
 We selected the MLP for two reasons: First, MLP benefits directly from the scaled and log-transformed preprocessing applied to our dataset, as gradient-based optimization converges more effectively on normalized inputs, which is an advantage that tree-based models like XGBoost and Random Forest do not require. Second, MLP builds naturally on what we learned in lecture about neural networks and gradient descent, making it a fitting and well-motivated addition to our model comparison. 
 \subsection{Random Forest}
 
-Random Forest \cite{breiman_rf} is a tree-based ensemble algorithm that builds a large number of decision trees and, in classification, determines a label using majority vote. Each tree is trained with a sample of the training data (bagging) with only a random subset of features to reduce variance/overfitting, and an ensemble improves prediction power compared to a single tree. Because trees are trained independently in parallel, any form of boosting is not used, which differs from XGBoost. This trades the bias-reduction benefits of boosting for lower sensitivity to noise, since errors are averaged out than sequentially built upon.
+Random Forest \cite{breiman_rf} is a tree-based ensemble algorithm that builds a large number of decision trees and, in classification, determines a label using majority vote. Each tree is trained with a sample of the training data (bagging) with only a random subset of features to reduce variance/overfitting, and an ensemble improves prediction power compared to a single tree. Because trees are trained independently in parallel, any form of boosting is not used, which differs from XGBoost. This trades the bias-reduction benefits of boosting for lower sensitivity to noise, since errors are averaged out rather than sequentially built upon.
 
 We selected Random Forest as a tree-based baseline for three main reasons. Firstly, Random Forest is one of the most well-established and widely-used algorithms for tabular classification tasks, which makes it a competitive reference against more complex models (XGBoost, MLP). Secondly, we wanted to evaluate whether boosting (XGBoost) meaningfully outperforms bagging (Random Forest) on this specific dataset and problem setting. Lastly, Random Forest extends our learning from lecture concepts such as decision trees and ensembles, making it a motivated choice along the more advanced models.
 
@@ -41,7 +41,7 @@ the threshold maximizing attack-class F1 was selected. Our goal, which differs f
 maximize each model's ability to distinguish between false and real attacks. The default 0.5 threshold may not be optimal as the model may miss attacks due to being conservative. The tuned predictions were also joined back to the
 raw \texttt{attack\_cat} labels to find out which attack category models struggle to classify.
 
-\section{Model and Tuning Summary and Main Results}
+\section{Model and Tuning Summary}
 \begin{table}[htbp]
     \centering
     \footnotesize
@@ -71,6 +71,7 @@ raw \texttt{attack\_cat} labels to find out which attack category models struggl
     \end{tabularx}
 \end{table}
 
+\section{Main Results}
 \begin{table}[htbp]
     \centering
     \footnotesize
