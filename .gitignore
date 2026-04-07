@@ -224,6 +224,7 @@ __marimo__/
 **/*.out
 **/*.toc
 **/*.synctex.gz
+**/*.toc
 **/*.pdf
 
 # Local reference LaTeX template
