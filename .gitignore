@@ -222,6 +222,7 @@ __marimo__/
 **/*.fls
 **/*.log
 **/*.out
+**/*.toc
 **/*.synctex.gz
 **/*.pdf
 

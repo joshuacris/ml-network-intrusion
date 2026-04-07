@@ -48,8 +48,13 @@ data chapter.
 \section{Per-Attack Category Tables}
 \label{app:per-attack-plots}
 
-The following figures reproduce the per-attack-category table outputs reported
-in each model notebook.
+The following figures reproduce the per-attack-category table outputs
+reported in each model notebook.
+
+Per-attack precision is uniformly 1.0 by construction of this breakdown.
+Each table groups only true attack rows after excluding Normal traffic, so
+no false-positive cases remain within an attack-category subset. As a
+result, recall and F1 are the more informative per-category metrics.
 
 \begin{figure}[p]
     \centering
