@@ -58,7 +58,7 @@ raw \texttt{attack\_cat} labels to find out which attack category models struggl
         \addlinespace[0.3em]
         MLP &
         Tried \texttt{hidden\_layer\_sizes} from single- to multi-layer layouts between (32,) and (256,128,64,32); \texttt{activation} values \texttt{relu} and \texttt{tanh}; \texttt{learning\_rate\_init} values 1e-2, 1e-3, 5e-4, 3e-4, and 1e-4; \texttt{alpha} values 1e-4, 1e-3, 1e-2, 0.1, and 1.0; \texttt{batch\_size} values 32, 64, 128, and 256.
-        Best: \texttt{hidden\_layer\_sizes} = (128,64), \texttt{activation} = \texttt{tanh}, \texttt{learning\_rate\_init} = 0.01, \texttt{alpha} = 0.01, \texttt{batch\_size} = 128. \\
+        Best: \texttt{hidden\_layer\_sizes} = (128,64), \texttt{activation} = \texttt{relu}, \texttt{learning\_rate\_init} = 0.01, \texttt{alpha} = 0.001, \texttt{batch\_size} = 256. \\
         \addlinespace[0.3em]
         Random Forest &
         Tried \texttt{n\_estimators} values 100, 200, 300, and 500; \texttt{max\_depth} values None, 10, 20, 30, and 40; \texttt{min\_samples\_split} values 2, 5, 10, and 20; \texttt{min\_samples\_leaf} values 1, 2, 4, and 8; \texttt{max\_features} values \texttt{sqrt}, \texttt{log2}, 0.3, and 0.5; \texttt{bootstrap} values True and False.
