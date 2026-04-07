@@ -224,7 +224,6 @@ __marimo__/
 **/*.out
 **/*.toc
 **/*.synctex.gz
-**/*.toc
 
 # Local reference LaTeX template
 RGNIYD_Template_AI_ML_/
