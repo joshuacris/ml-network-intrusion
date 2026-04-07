@@ -4,6 +4,63 @@ CSCC11 Final Project — Binary network intrusion detection comparison study usi
 
 Dataset: https://www.kaggle.com/datasets/mrwellsdavid/unsw-nb15/data
 
+## Setup
+
+**Requirements:** Python 3.12+
+
+```bash
+# Create and activate a virtual environment
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+## Running the Notebooks
+
+Start JupyterLab from the repo root:
+
+```bash
+jupyter lab
+```
+
+Run notebooks in this order:
+
+1. `notebooks/preprocessing.ipynb` — must run first; produces the processed CSVs in `data/processed/`
+2. Any model notebook in any order (`logistic_regression`, `mlp`, `random_forest_classifier`, `xgboost`)
+
+Each model notebook skips hyperparameter tuning by default (best params are hardcoded). To re-run tuning, comment out the direct instantiation cell and uncomment the `RandomizedSearchCV` cell.
+
+## Running the Modularized Scripts
+
+Each script under `src/` can be run standalone from the repo root:
+
+```bash
+# Example: run Random Forest pipeline
+python src/model_benchmarking/random_forest/random_forest.py
+
+# Example: run Logistic Regression pipeline
+python src/model_benchmarking/logistic_regression/logistic_regression.py
+
+# Example: run MLP pipeline
+python src/model_benchmarking/mlp/mlp.py
+
+# Example: run XGBoost pipeline
+python src/model_benchmarking/xgboost/xgboost.py
+```
+
+Scripts expect the processed CSVs to already exist in `data/processed/`. Run `preprocessing.ipynb` first if they are missing.
+
+## Building the Report
+
+The PDF is already compiled at `final_report_project/main.pdf`. To recompile from LaTeX source (requires [TeX Live](https://www.tug.org/texlive/) or [MiKTeX](https://miktex.org/)):
+
+```bash
+cd final_report_project
+latexmk -pdf main.tex
+```
+
 ## Report
 
 The final PDF report is at [`final_report_project/main.pdf`](final_report_project/main.pdf).
